@@ -26,13 +26,50 @@ enum _InsertTarget insert_targets[] = {
         [I_INDEX] = INSERT_TARGET__I_INDEX,
 };
 
+enum _LogicalOp logical_ops[] = {
+        [AND] = LOGICAL_OP__AND,
+        [OR] = LOGICAL_OP__OR,
+        [NOT] = LOGICAL_OP__NOT,
+};
 
-//NONE = 0,
-//SET = 3,
-//ATTR = 4,
-//LOGICAL_OP = 5,
-//CMP = 6,
-//LINK = 7,
+enum _Cmp cmps[] = {
+        [GT] = CMP__GT,
+        [LT] = CMP__LT,
+        [EQ] = CMP__EQ,
+        [GT_EQ] = CMP__GT_EQ,
+        [LT_EQ] = CMP__LT_EQ,
+        [SUBSTR] = CMP__SUBSTR,
+};
+
+Attr *convert_attr(attr_t attr) {
+    Attr *a = malloc(sizeof(Attr));
+    attr__init(a);
+    switch (attr.type) {
+        case INT: {
+            a->type = VAL_TYPE__INT;
+            a->i = attr.val.i;
+            break;
+        }
+        case DOUBLE: {
+            a->type = VAL_TYPE__DOUBLE;
+            a->d = attr.val.d;
+            break;
+        }
+        case STRING: {
+            a->type = VAL_TYPE__STRING;
+            a->str = STRING__INIT;
+            a->str->size = attr.val.str.size;
+            a->str->str = attr.val.str.str;
+            break;
+        }
+        case BOOL: {
+            a->type = VAL_TYPE__BOOL;
+            a->b = attr.val.b;
+            break;
+        }
+    }
+    return a;
+}
 
 Ast *convert(ast_node *node) {
     Ast *ast = malloc(sizeof(Ast));
@@ -41,6 +78,10 @@ Ast *convert(ast_node *node) {
     if (node->right) ast->right = convert(node->right);
     ast->type = node_types[node->type];
     switch (node->v_type) {
+        case NONE:{
+            ast->v_type = VALUE_TYPE__NONE;
+            break;
+        }
         case NAME: {
             ast->v_type = VALUE_TYPE__NAME;
             ast->val->name = node->value;
@@ -53,16 +94,43 @@ Ast *convert(ast_node *node) {
         }
         case SET: {
             ast->v_type = VALUE_TYPE__SET;
-            ast->val->set = malloc(sizeof(Set));
-            set__init(ast->val->set);
-            ast->val->set->node_id = ((set_t *) node->value)->node_id;
-            ast->val->set->attr_name = ((set_t *) node->value)->attr_name;
-            ast->val->set->new_value = malloc(sizeof(Attr));
-            attr__init(ast->val->set->new_value);
-            ast->val->set->new_value->type;
-
+            set_t *set = (set_t *) node->value;
+            Set *s = malloc(sizeof(Set));
+            ast->val->set = s
+            set__init(s);
+            s->node_id = set->node_id;
+            s->attr_name = set->attr_name;
+            s->new_value = convert_attr(set->new_value);
+            break;
         }
-
-            // in process...
+        case ATTR: {
+            ast->v_type = VALUE_TYPE__ATTR;
+            ast->val->attr = convert_attr(*(attr_t *) node->value);
+            break;
+        }
+        case LOGICAL_OP: {
+            ast->v_type = VALUE_TYPE__LOGICAL_OP;
+            ast->val->l_op = logical_ops[*(logical_op *) node->value];
+            break;
+        }
+        case CMP: {
+            ast->v_type = VALUE_TYPE__CMP;
+            ast->val->cmp = cmps[*(cmp_t *) node->value];
+            break;
+        }
+        case LINK: {
+            ast->v_type = VALUE_TYPE__LINK;
+            Link *l = malloc(sizeof(Link));
+            ast->val->link = l;
+            link__init(l);
+            link_t *link = node->value;
+            l->link_id = link->link_id;
+            l->node_from_type_id = link->node_from_type_id;
+            l->node_from_id = link->node_from_id;
+            l->node_to_type_id = link->node_to_type_id;
+            l->node_to_id = link->node_to_id;
+            break;
+        }
     }
+    return ast;
 }
