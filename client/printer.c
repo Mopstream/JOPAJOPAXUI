@@ -115,23 +115,23 @@ void print_value(ast_node *node, int32_t nesting_level) {
             printf("%*s%s\n", nesting_level, "", "none");
             break;
     }
-
-    void print_node(ast_node *node, int32_t nesting_level) {
-        if (node) {
-            printf("%*sNode: %s\n", nesting_level, "", node_types_p[node->type]);
-            printf("%*sValue:\n", nesting_level, "");
-            print_value(node, nesting_level + 2);
-            if (node->left) {
-                printf("%*sLeft:\n", nesting_level, "");
-                print_node(node->left, nesting_level + 4);
-            }
-            if(node->right) {
-                printf("%*sRight:\n", nesting_level, "");
-                print_node(node->right, nesting_level + 4);
-            }
-        } else {
-            printf("%*sNone\n", nesting_level, "");
-        }
-    }
-
 }
+
+void print_node(ast_node *node, int32_t nesting_level) {
+    if (node) {
+        printf("%*sNode: %s\n", nesting_level, "", node_types_p[node->type]);
+        printf("%*sValue:\n", nesting_level, "");
+        print_value(node, nesting_level + 2);
+        if (node->left) {
+            printf("%*sLeft:\n", nesting_level, "");
+            print_node(node->left, nesting_level + 4);
+        }
+        if (node->right) {
+            printf("%*sRight:\n", nesting_level, "");
+            print_node(node->right, nesting_level + 4);
+        }
+    } else {
+        printf("%*sNone\n", nesting_level, "");
+    }
+}
+

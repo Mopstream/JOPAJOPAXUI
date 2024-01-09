@@ -36,9 +36,9 @@ enum _InsertTarget insert_targets[] = {
 
 Ast *convert(ast_node *node) {
     Ast *ast = malloc(sizeof(Ast));
-    *ast = (Ast) AST__INIT;
-    ast->left = convert(node->left);
-    ast->right = convert(node->right);
+    ast__init(ast);
+    if (node->left) ast->left = convert(node->left);
+    if (node->right) ast->right = convert(node->right);
     ast->type = node_types[node->type];
     switch (node->v_type) {
         case NAME: {
@@ -53,11 +53,13 @@ Ast *convert(ast_node *node) {
         }
         case SET: {
             ast->v_type = VALUE_TYPE__SET;
-            *(ast->val->set) = (Set) SET__INIT;
+            ast->val->set = malloc(sizeof(Set));
+            set__init(ast->val->set);
             ast->val->set->node_id = ((set_t *) node->value)->node_id;
             ast->val->set->attr_name = ((set_t *) node->value)->attr_name;
-            *ast->val->set->new_value = (Attr) ATTR__INIT;
-            ast->val->set->new_value->type = ((set_t *) node->value)->new_value.type;
+            ast->val->set->new_value = malloc(sizeof(Attr));
+            attr__init(ast->val->set->new_value);
+            ast->val->set->new_value->type;
 
         }
 
