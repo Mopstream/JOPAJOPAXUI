@@ -26,7 +26,7 @@ char *insert_targets_p[] = {
         [I_NODE] = "node",
 };
 
-char *logical_ops[] = {
+char *logical_ops_p[] = {
         [AND] = "and",
         [OR] = "or",
         [NOT] = "not",
@@ -88,7 +88,7 @@ void print_value(ast_node *node, int32_t nesting_level) {
             }
         }
         case FILTER_N: {
-            printf("%*slogical operator: %s\n", nesting_level, "", logical_ops[*(logical_op *) (node->value)]);
+            printf("%*slogical operator: %s\n", nesting_level, "", logical_ops_p[*(logical_op *) (node->value)]);
             break;
         }
         case CONDITIONAL_N: {
