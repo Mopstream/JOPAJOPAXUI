@@ -57,7 +57,8 @@ Attr *convert_attr(attr_t attr) {
         }
         case STRING: {
             a->type = VAL_TYPE__STRING;
-            a->str = STRING__INIT;
+            a->str = malloc(sizeof(String));
+            string__init(a->str);
             a->str->size = attr.val.str.size;
             a->str->str = attr.val.str.str;
             break;
@@ -96,7 +97,7 @@ Ast *convert(ast_node *node) {
             ast->v_type = VALUE_TYPE__SET;
             set_t *set = (set_t *) node->value;
             Set *s = malloc(sizeof(Set));
-            ast->val->set = s
+            ast->val->set = s;
             set__init(s);
             s->node_id = set->node_id;
             s->attr_name = set->attr_name;
