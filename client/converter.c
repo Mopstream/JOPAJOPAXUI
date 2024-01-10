@@ -1,7 +1,7 @@
-#include "ast.h"
+#include "converter.h"
 #include "types.h"
-#include "../spec.pb-c.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 enum _AstNodeType node_types[] = {
         [FILENAME_N] = AST_NODE_TYPE__FILENAME_N,
@@ -78,6 +78,10 @@ Ast *convert(ast_node *node) {
     if (node->left) ast->left = convert(node->left);
     if (node->right) ast->right = convert(node->right);
     ast->type = node_types[node->type];
+
+    Value *v = malloc(sizeof(Value));
+    value__init(v);
+    ast->val = v;
     switch (node->v_type) {
         case NONE:{
             ast->v_type = VALUE_TYPE__NONE;
@@ -85,19 +89,19 @@ Ast *convert(ast_node *node) {
         }
         case NAME: {
             ast->v_type = VALUE_TYPE__NAME;
-            ast->val->name = node->value;
+            v->name = node->value;
             break;
         }
         case INSERT_TARGET: {
             ast->v_type = VALUE_TYPE__INSERT_TARGET;
-            ast->val->target = insert_targets[*(insert_target_t *) node->value];
+            v->target = insert_targets[*(insert_target_t *) node->value];
             break;
         }
         case SET: {
             ast->v_type = VALUE_TYPE__SET;
             set_t *set = (set_t *) node->value;
             Set *s = malloc(sizeof(Set));
-            ast->val->set = s;
+            v->set = s;
             set__init(s);
             s->node_id = set->node_id;
             s->attr_name = set->attr_name;
@@ -106,23 +110,23 @@ Ast *convert(ast_node *node) {
         }
         case ATTR: {
             ast->v_type = VALUE_TYPE__ATTR;
-            ast->val->attr = convert_attr(*(attr_t *) node->value);
+            v->attr = convert_attr(*(attr_t *) node->value);
             break;
         }
         case LOGICAL_OP: {
             ast->v_type = VALUE_TYPE__LOGICAL_OP;
-            ast->val->l_op = logical_ops[*(logical_op *) node->value];
+            v->l_op = logical_ops[*(logical_op *) node->value];
             break;
         }
         case CMP: {
             ast->v_type = VALUE_TYPE__CMP;
-            ast->val->cmp = cmps[*(cmp_t *) node->value];
+            v->cmp = cmps[*(cmp_t *) node->value];
             break;
         }
         case LINK: {
             ast->v_type = VALUE_TYPE__LINK;
             Link *l = malloc(sizeof(Link));
-            ast->val->link = l;
+            v->link = l;
             link__init(l);
             link_t *link = node->value;
             l->link_id = link->link_id;

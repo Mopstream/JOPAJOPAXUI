@@ -41,6 +41,17 @@ char *comparators[] = {
         [SUBSTR] = "contains as substring",
 };
 
+char *value_types_p[] = {
+        [NONE] = "none",
+        [NAME] = "name",
+        [INSERT_TARGET] = "insert_target",
+        [SET] = "set",
+        [ATTR] = "attr",
+        [LOGICAL_OP] = "logical_op",
+        [CMP] = "cmp",
+        [LINK] = "link",
+};
+
 void print_attr(attr_t *attr, int32_t nesting_level) {
     switch (attr->type) {
         case INT: {
@@ -120,6 +131,7 @@ void print_value(ast_node *node, int32_t nesting_level) {
 void print_node(ast_node *node, int32_t nesting_level) {
     if (node) {
         printf("%*sNode: %s\n", nesting_level, "", node_types_p[node->type]);
+        printf("%*sValue Type: %s\n", nesting_level, "", value_types_p[node->v_type]);
         printf("%*sValue:\n", nesting_level, "");
         print_value(node, nesting_level + 2);
         if (node->left) {
