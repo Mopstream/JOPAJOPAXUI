@@ -1,7 +1,6 @@
 #include "converter.h"
 #include "types.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 enum _AstNodeType node_types[] = {
         [FILENAME_N] = AST_NODE_TYPE__FILENAME_N,

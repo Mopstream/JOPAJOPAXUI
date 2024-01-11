@@ -91,7 +91,7 @@ ast_node *ast = 0;
 
 %start file
 %%
-file: FILENAME_T L_BR query R_BR {ast = new_filename_node($1, $3);}
+file: FILENAME_T L_BR query R_BR {ast = new_filename_node($1, $3); return 0;}
 
 query: select { $$ = $1; }
      | insert { $$ = $1; }

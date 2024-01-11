@@ -6,66 +6,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-uint32_t true_rand(uint32_t start, uint32_t end) {
-    register uint32_t r;
-    asm("rdrand %0"
-            :"=r"(r)
-            );
-
-    return start + r % (end - start + 1);
-}
-
-void to_add(uint32_t *arr, uint32_t size, FILE *storage_file) {
-    for (uint32_t i = 0; i < size; ++i) {
-        arr[i] = true_rand(0, 1000000000);
-        if (storage_file) fprintf(storage_file, "%d\n", arr[i]);
-    }
-    fflush(storage_file);
-}
-
-uint32_t *get_stored(uint64_t * cnt) {
-    char *storage_name = "../storage";
-    char *storage_size_name = "../storage_size";
-    FILE *file = fopen(storage_name, "r");
-    FILE *size = fopen(storage_size_name, "r");
-    fscanf(size, "%lu", cnt);
-    fclose(size);
-
-    uint32_t * storage = malloc(*cnt * 4);
-    for (uint64_t i = 0; i < *cnt; ++i) {
-        fscanf(file, "%d\n", storage + i);
-    }
-    fclose(file);
-    return  storage;
-}
-
-void
-to_delete(uint32_t *del, uint32_t to_del_size, uint32_t **old, uint64_t cnt, uint32_t *added, uint32_t added_size) {
-    for (uint32_t i = 0; i < to_del_size; ++i) {
-        del[i] = true_rand(0, cnt + added_size - i - 1);
-    }
-    uint32_t *merged = malloc((cnt + added_size) * sizeof(uint32_t));
-    for (uint32_t i = 0; i < cnt; ++i) {
-        merged[i] = (*old)[i];
-    }
-    for (uint32_t i = 0; i < added_size; ++i) {
-        merged[i + cnt] = added[i];
-    }
-    for (uint32_t i = 0; i < to_del_size; ++i) {
-        uint32_t ind = del[i];
-        del[i] = merged[ind];
-        for (uint32_t j = ind; j < cnt + added_size - i - 1; ++j) {
-            merged[j] = merged[j + 1];
-        }
-    }
-    free(*old);
-    *old = malloc((cnt + added_size - to_del_size) * sizeof(uint32_t));
-    for (uint32_t i = 0; i < cnt + added_size - to_del_size; ++i) {
-        (*old)[i] = merged[i];
-    }
-    free(merged);
-}
-
 void add_del_test() {
     char *db_name = "../add_del.db";
     char *csv_name = "../add_del.csv";
