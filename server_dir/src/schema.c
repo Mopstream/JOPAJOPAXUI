@@ -505,7 +505,7 @@ void delete_node_by_id(schema_t *schema, index_t *index, uint32_t node_id) {
     extra->index = index;
 
     struct find_context context = find(schema, index->first_page_num, find_node_by_id_action, extra);
-   if (context.page->header->chunks_count == 1) {
+    if (context.page->header->chunks_count == 1) {
         if (index->first_page_num == context.page->header->this_page) {
             index->first_page_num = context.page->header->next_page;
         }
@@ -759,4 +759,18 @@ index_t *get_first_index(schema_t *schema, char name[16]) {
     struct find_context context = find(schema, schema->first_index, find_index_by_name_action, name);
     destroy_page(context.page);
     return context.thing;
+}
+
+index_t *create_index(char name[16], attr_type_t *attrs, uint32_t cnt) {
+    index_t *index = malloc(sizeof(index_t));
+    element_type_t el_type = index->type;
+    memcpy(el_type.type_name, name, 16);
+    el_type.kind = I_NODE;
+    el_type.description.node.type_id = cnt;
+    el_type.description.node.attr_count = cnt;
+    el_type.description.node.attr_types = attrs;
+    el_type.size = 28 + sizeof(element_kind_t) + cnt * sizeof(attr_type_t);
+    index->count = 0;
+    index->first_page_num = 0;
+    return index;
 }

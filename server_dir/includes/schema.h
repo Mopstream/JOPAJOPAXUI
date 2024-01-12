@@ -94,4 +94,5 @@ typedef struct{
 void node_enumerate(schema_t *schema, index_t *index, select_q * select);
 void link_enumerate(schema_t *schema, index_t *index);
 index_t * get_first_index(schema_t *schema, char name[16]);
+index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt);
 #endif

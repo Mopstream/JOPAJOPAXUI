@@ -24,6 +24,11 @@ typedef enum {
 } val_type_t;
 
 typedef struct {
+    char* name;
+    val_type_t type;
+} attr_desc_t;
+
+typedef struct {
     val_type_t type;
     value_t val;
 } attr_t;

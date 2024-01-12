@@ -1,21 +1,16 @@
-#include "ast.h"
-#include "printer.h"
-#include "parser.tab.h"
-#include "converter.h"
-
 #include <arpa/inet.h>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <strings.h>
 #include <sys/socket.h>
-#include <unistd.h>
+#include "converter.h"
 
-#define MAX 80
 #define PORT 3110
 #define SA struct sockaddr
 
+extern int yyparse();
+
+extern ast_node *ast;
 
 void send_message(Ast *msg, int sockfd) {
     uint64_t message_size = ast__get_packed_size(msg);
@@ -25,10 +20,6 @@ void send_message(Ast *msg, int sockfd) {
     free(buffer);
 }
 
-
-extern int yydebug;
-extern ast_node *ast;
-
 int main() {
     int sockfd;
     struct sockaddr_in servaddr;
@@ -36,8 +27,8 @@ int main() {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         exit(0);
-    } else
-        bzero(&servaddr, sizeof(servaddr));
+    }
+    bzero(&servaddr, sizeof(servaddr));
 
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -48,11 +39,20 @@ int main() {
     }
 
     yyparse();
-    print_node(ast, 0);
-
     Ast *msg = convert(ast);
-    send_message(msg, sockfd);
+    int flag = 1;
 
+    send_message(msg, sockfd);
+    for (;;) {
+        recv(sockfd, &flag, 1024, 0);
+//        printf("\n %d\n", flag);
+        if (flag) {
+            yyparse();
+            Ast *msg = convert(ast);
+            send_message(msg, sockfd);
+            flag = 0;
+        }
+    }
 
     return 0;
 }

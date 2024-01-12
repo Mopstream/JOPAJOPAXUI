@@ -43,7 +43,7 @@ void exec(query_t *q) {
         case DELETE: {
             switch (q->target) {
                 case Q_INDEX: {
-                    delete_index_by_name(schema, q->query_body.del.name);
+                    delete_index_by_name(schema, q->index->type.type_name);
                     break;
                 }
                 case Q_NODE: {

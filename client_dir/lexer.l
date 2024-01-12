@@ -31,6 +31,10 @@ node_from                   { return NODE_FROM; }
 node_to                     { return NODE_TO; }
 filter                      { return FILTER_T; }
 set                         { return SET_T; }
+int                         { yylval.type = INT; return TYPE_T; }
+double                      { yylval.type = DOUBLE; return TYPE_T; }
+string                      { yylval.type = STRING; return TYPE_T; }
+bool                        { yylval.type = BOOL; return TYPE_T; }
 eq                          { yylval.cmp = EQ; return COMPARE_OP; }
 gt                          { yylval.cmp = GT; return COMPARE_OP; }
 lt                          { yylval.cmp = LT; return COMPARE_OP; }

@@ -40,6 +40,13 @@ enum _Cmp cmps[] = {
         [SUBSTR] = CMP__SUBSTR,
 };
 
+enum _ValType val_types[] = {
+        [INT] = VAL_TYPE__INT,
+        [DOUBLE] = VAL_TYPE__DOUBLE,
+        [STRING] = VAL_TYPE__STRING,
+        [BOOL] = VAL_TYPE__BOOL,
+};
+
 Attr *convert_attr(attr_t attr) {
     Attr *a = malloc(sizeof(Attr));
     attr__init(a);
@@ -82,7 +89,7 @@ Ast *convert(ast_node *node) {
     value__init(v);
     ast->val = v;
     switch (node->v_type) {
-        case NONE:{
+        case NONE: {
             ast->v_type = VALUE_TYPE__NONE;
             break;
         }
@@ -133,6 +140,20 @@ Ast *convert(ast_node *node) {
             l->node_from_id = link->node_from_id;
             l->node_to_type_id = link->node_to_type_id;
             l->node_to_id = link->node_to_id;
+            break;
+        }
+        case CNT: {
+            ast->v_type = VALUE_TYPE__CNT;
+            v->cnt = *(uint32_t *) node->value;
+            break;
+        }
+        case ATTR_DESC: {
+            AttrType *attr_type = malloc(sizeof(AttrType));
+            v->attr_type = attr_type;
+            attr__type__init(attr_type);
+            attr_desc_t *desc = node->value;
+            attr_type->name = desc->name;
+            attr_type->val = val_types[desc->type];
             break;
         }
     }

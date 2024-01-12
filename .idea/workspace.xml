@@ -9,7 +9,39 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6b453759-1451-4b43-b1e3-f2e118a2918b" name="Changes" comment="" />
+    <list default="true" id="6b453759-1451-4b43-b1e3-f2e118a2918b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/query_constractor.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/query_constructor.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/server" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/server.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/spec.pb-c.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/spec.pb-c.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/spec.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/ast.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/ast.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/converter.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/converter.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/converter.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/converter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lexer.l" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/lexer.l" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/client.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/parser.y" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/parser.y" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/printer.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/printer.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/includes/index.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/index.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/includes/node.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/node.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/includes/page.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/page.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/includes/query.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/query.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/includes/schema.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/schema.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/page.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/page.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/query.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/query.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/schema.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/schema.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec.proto" beforeDir="false" afterPath="$PROJECT_DIR$/spec.proto" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +49,9 @@
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -31,27 +66,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Makefile Target.all.executor": "Run",
-    "Makefile Target.clean.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/mopstream/edu/tmp/low_level_programming_lab1/Lab3",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "tools.buf",
-    "structure.view.defaults.are.configured": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.clean.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/mopstream/CLionProjects/llp-lab3&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;tools.buf&quot;,
+    &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server" />
+    </key>
+  </component>
   <component name="RunManager" selected="Makefile Target.clean">
     <configuration name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/client/Makefile" target="all" workingDirectory="" arguments="">
@@ -83,7 +127,14 @@
       <workItem from="1704783611098" duration="250000" />
       <workItem from="1704783875786" duration="63000" />
       <workItem from="1704783984262" duration="5000" />
-      <workItem from="1704783995431" duration="16254000" />
+      <workItem from="1704783995431" duration="40111000" />
+      <workItem from="1704969831550" duration="400000" />
+      <workItem from="1704970260324" duration="189000" />
+      <workItem from="1704970456903" duration="33000" />
+      <workItem from="1704970507269" duration="740000" />
+      <workItem from="1704977883025" duration="3376000" />
+      <workItem from="1704982582306" duration="27718000" />
+      <workItem from="1705093586775" duration="5912000" />
     </task>
     <servers />
   </component>

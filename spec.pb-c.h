@@ -19,6 +19,7 @@ typedef struct String String;
 typedef struct Attr Attr;
 typedef struct Set Set;
 typedef struct Link Link;
+typedef struct AttrType AttrType;
 typedef struct Value Value;
 typedef struct Ast Ast;
 
@@ -39,7 +40,8 @@ typedef enum _AstNodeType {
   AST_NODE_TYPE__SET_N = 10,
   AST_NODE_TYPE__VAL_N = 11,
   AST_NODE_TYPE__NAME_N = 12,
-  AST_NODE_TYPE__LIST_N = 13
+  AST_NODE_TYPE__LIST_N = 13,
+  AST_NODE_TYPE__ATTR_DESC_N = 14
     PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE(AST_NODE_TYPE)
 } AstNodeType;
 typedef enum _InsertTarget {
@@ -78,7 +80,9 @@ typedef enum _ValueType {
   VALUE_TYPE__ATTR = 4,
   VALUE_TYPE__LOGICAL_OP = 5,
   VALUE_TYPE__CMP = 6,
-  VALUE_TYPE__LINK = 7
+  VALUE_TYPE__LINK = 7,
+  VALUE_TYPE__CNT = 8,
+  VALUE_TYPE__ATTR_DESC = 9
     PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE(VALUE_TYPE)
 } ValueType;
 
@@ -135,6 +139,17 @@ struct  Link
     , 0, 0, 0, 0, 0 }
 
 
+struct  AttrType
+{
+  ProtobufCMessage base;
+  char *name;
+  ValType val;
+};
+#define ATTR__TYPE__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&attr__type__descriptor) \
+    , (char *)protobuf_c_empty_string, VAL_TYPE__INT }
+
+
 struct  Value
 {
   ProtobufCMessage base;
@@ -145,10 +160,12 @@ struct  Value
   LogicalOp l_op;
   Cmp cmp;
   Link *link;
+  uint32_t cnt;
+  AttrType *attr_type;
 };
 #define VALUE__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&value__descriptor) \
-    , (char *)protobuf_c_empty_string, INSERT_TARGET__I_NODE, NULL, NULL, LOGICAL_OP__AND, CMP__GT, NULL }
+    , (char *)protobuf_c_empty_string, INSERT_TARGET__I_NODE, NULL, NULL, LOGICAL_OP__AND, CMP__GT, NULL, 0, NULL }
 
 
 struct  Ast
@@ -241,6 +258,25 @@ Link *
 void   link__free_unpacked
                      (Link *message,
                       ProtobufCAllocator *allocator);
+/* AttrType methods */
+void   attr__type__init
+                     (AttrType         *message);
+size_t attr__type__get_packed_size
+                     (const AttrType   *message);
+size_t attr__type__pack
+                     (const AttrType   *message,
+                      uint8_t             *out);
+size_t attr__type__pack_to_buffer
+                     (const AttrType   *message,
+                      ProtobufCBuffer     *buffer);
+AttrType *
+       attr__type__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   attr__type__free_unpacked
+                     (AttrType *message,
+                      ProtobufCAllocator *allocator);
 /* Value methods */
 void   value__init
                      (Value         *message);
@@ -293,6 +329,9 @@ typedef void (*Set_Closure)
 typedef void (*Link_Closure)
                  (const Link *message,
                   void *closure_data);
+typedef void (*AttrType_Closure)
+                 (const AttrType *message,
+                  void *closure_data);
 typedef void (*Value_Closure)
                  (const Value *message,
                   void *closure_data);
@@ -315,6 +354,7 @@ extern const ProtobufCMessageDescriptor string__descriptor;
 extern const ProtobufCMessageDescriptor attr__descriptor;
 extern const ProtobufCMessageDescriptor set__descriptor;
 extern const ProtobufCMessageDescriptor link__descriptor;
+extern const ProtobufCMessageDescriptor attr__type__descriptor;
 extern const ProtobufCMessageDescriptor value__descriptor;
 extern const ProtobufCMessageDescriptor ast__descriptor;
 

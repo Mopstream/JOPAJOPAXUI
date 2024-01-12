@@ -15,6 +15,7 @@ enum AstNodeType {
     VAL_N = 11;
     NAME_N = 12;
     LIST_N = 13;
+    ATTR_DESC_N = 14;
 }
 
 enum InsertTarget {
@@ -81,6 +82,13 @@ enum ValueType {
   LOGICAL_OP = 5;
   CMP = 6;
   LINK = 7;
+  CNT = 8;
+  ATTR_DESC = 9;
+}
+
+message Attr_Type {
+  string name = 1;
+  ValType val = 2;
 }
 
 message Value {
@@ -91,6 +99,8 @@ message Value {
   LogicalOp l_op = 5;
   Cmp cmp = 6;
   Link link = 7;
+  uint32 cnt = 8;
+  Attr_Type attr_type = 9;
 }
 
 message Ast {

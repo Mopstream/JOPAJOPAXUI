@@ -27,6 +27,7 @@ ast_node *ast = 0;
     set_t* set_e;
     cmp_t cmp;
     logical_op l_op;
+    val_type_t type;
 }
 
 %token L_PR
@@ -53,9 +54,10 @@ ast_node *ast = 0;
 %token FILTER_T
 %token SET_T
 %token<str_val> FILENAME_T
+%token<type> TYPE_T
 %token<cmp> COMPARE_OP
-%token<cmp> LOGICAL_BOP
-%token<cmp> LOGICAL_UOP
+%token<l_op> LOGICAL_BOP
+%token<l_op> LOGICAL_UOP
 %token<bool_val> BOOL_T
 %token<int_val> INT_T
 %token<double_val> DOUBLE_T
@@ -76,6 +78,7 @@ ast_node *ast = 0;
 %type<node> index_from_attrs
 %type<node> attr_list
 %type<node> attr
+%type<node> name_node
 %type<str_val> name
 %type<in_body> insert_obj
 %type<node> values
@@ -119,12 +122,14 @@ delete_body: index_from_name L_BR NODE_T L_PR INT_T R_PR R_BR { $$ = new_delete_
 
 index_from_name : INDEX_T L_PR INDEX_NAME COLON name R_PR { $$ = new_index_node_from_name($5); }
 
-index_from_attrs : INDEX_T L_PR NAMES L_BRK attr_list R_BRK R_PR { $$ = new_index_node_from_attrs($5); }
+index_from_attrs : INDEX_T L_PR INDEX_NAME COLON name COMMA NAMES L_BRK attr_list R_BRK R_PR { $$ = new_index_node_from_attrs($5, $9); }
 
 attr_list : attr COMMA attr_list { $$ = add_to_list($3, $1); }
-          | attr { $$ = $1; }
+          | attr { $$ = list_init($1); }
 
-attr: name { $$ = new_name_node($1); }
+attr: name COLON TYPE_T { $$ = new_attr_node($1, $3); }
+
+name_node : name { $$ = new_name_node($1); }
 
 name: NAME_T { if(strlen($1) > MAX_NAME_LENGTH) { yyerror("name is too long"); YYABORT; } $$ = $1; }
 
@@ -134,7 +139,7 @@ insert_obj: NODE_T L_PR values R_PR {$$ = (insert_body_t){.target = I_NODE, .bod
 values: VALUES COLON L_BRK element_list R_BRK { $$ = $4; }
 
 element_list: element COMMA element_list { $$ = add_to_list($3, $1); }
-            | element { $$ = $1; }
+            | element { $$ = list_init($1); }
 
 element: value { $$ = new_val_node($1); }
 
@@ -154,9 +159,9 @@ filter: FILTER_T COLON operation { $$ = $3; }
 operation: logical_op { $$ = $1; }
          | compare_op { $$ = $1; }
 
-compare_op: COMPARE_OP L_PR attr COMMA element R_PR { $$ = new_filter_node(new_conditional_node($3, $1, $5), 0, 0); }
+compare_op: COMPARE_OP L_PR name_node COMMA element R_PR { $$ = new_filter_node(new_conditional_node($3, $1, $5), 0, 0); }
 
-logical_op: LOGICAL_UOP L_PR operation R_PR { $$ = new_filter_node($3, $3, $1); }
+logical_op: LOGICAL_UOP L_PR operation R_PR { $$ = new_filter_node($3, 0, $1); }
           | LOGICAL_BOP L_PR operation COMMA operation R_PR { $$ = new_filter_node($3, $5, $1); }
 
 set: SET_T L_PR INT_T COMMA name COMMA value R_PR { $$ = new_set_expr($3, $5, $7); }

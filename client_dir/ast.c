@@ -70,9 +70,11 @@ ast_node *new_index_node_from_name(char index_name[16]) {
     return this;
 }
 
-ast_node *new_index_node_from_attrs(ast_node *attrs_list) {
+ast_node *new_index_node_from_attrs(char index_name[16], ast_node *attrs_list) {
     ast_node *this = create_node();
     this->type = INDEX_N;
+    this->v_type = NAME;
+    this->value = index_name;
     this->left = attrs_list;
     return this;
 }
@@ -82,6 +84,21 @@ ast_node *add_to_list(ast_node *list, ast_node *val) {
     this->type = LIST_N;
     this->left = val;
     this->right = list;
+    this->v_type = CNT;
+    uint32_t * i = malloc(sizeof(uint32_t));
+    *i = *(uint32_t *)list->value + 1;
+    this->value = i;
+    return this;
+}
+
+ast_node *list_init(ast_node *val) {
+    ast_node *this = create_node();
+    this->type = LIST_N;
+    this->left = val;
+    this->v_type = CNT;
+    uint32_t * i = malloc(sizeof(uint32_t));
+    *i = 0;
+    this->value = i;
     return this;
 }
 
@@ -177,5 +194,16 @@ ast_node *new_name_node(char name[16]) {
     this->type = NAME_N;
     this->v_type = NAME;
     this->value = name;
+    return this;
+}
+
+ast_node *new_attr_node(char name[16], val_type_t type){
+    ast_node * this = create_node();
+    this->type = ATTR_DESC_N;
+    this->v_type = ATTR_DESC;
+    attr_desc_t * a = malloc(sizeof(attr_desc_t));
+    a->type = type;
+    a->name = name;
+    this->value = a;
     return this;
 }

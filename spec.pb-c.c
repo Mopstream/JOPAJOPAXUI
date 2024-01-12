@@ -187,6 +187,51 @@ void   link__free_unpacked
   assert(message->base.descriptor == &link__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
+void   attr__type__init
+                     (AttrType         *message)
+{
+  static const AttrType init_value = ATTR__TYPE__INIT;
+  *message = init_value;
+}
+size_t attr__type__get_packed_size
+                     (const AttrType *message)
+{
+  assert(message->base.descriptor == &attr__type__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t attr__type__pack
+                     (const AttrType *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &attr__type__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t attr__type__pack_to_buffer
+                     (const AttrType *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &attr__type__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+AttrType *
+       attr__type__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (AttrType *)
+     protobuf_c_message_unpack (&attr__type__descriptor,
+                                allocator, len, data);
+}
+void   attr__type__free_unpacked
+                     (AttrType *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &attr__type__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
 void   value__init
                      (Value         *message)
 {
@@ -572,7 +617,58 @@ const ProtobufCMessageDescriptor link__descriptor =
   (ProtobufCMessageInit) link__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCFieldDescriptor value__field_descriptors[7] =
+static const ProtobufCFieldDescriptor attr__type__field_descriptors[2] =
+{
+  {
+    "name",
+    1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_STRING,
+    0,   /* quantifier_offset */
+    offsetof(AttrType, name),
+    NULL,
+    &protobuf_c_empty_string,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "val",
+    2,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_ENUM,
+    0,   /* quantifier_offset */
+    offsetof(AttrType, val),
+    &val_type__descriptor,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned attr__type__field_indices_by_name[] = {
+  0,   /* field[0] = name */
+  1,   /* field[1] = val */
+};
+static const ProtobufCIntRange attr__type__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 2 }
+};
+const ProtobufCMessageDescriptor attr__type__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "Attr_Type",
+  "AttrType",
+  "AttrType",
+  "",
+  sizeof(AttrType),
+  2,
+  attr__type__field_descriptors,
+  attr__type__field_indices_by_name,
+  1,  attr__type__number_ranges,
+  (ProtobufCMessageInit) attr__type__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor value__field_descriptors[9] =
 {
   {
     "name",
@@ -658,10 +754,36 @@ static const ProtobufCFieldDescriptor value__field_descriptors[7] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
+  {
+    "cnt",
+    8,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_UINT32,
+    0,   /* quantifier_offset */
+    offsetof(Value, cnt),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+  {
+    "attr_type",
+    9,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_MESSAGE,
+    0,   /* quantifier_offset */
+    offsetof(Value, attr_type),
+    &attr__type__descriptor,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
 };
 static const unsigned value__field_indices_by_name[] = {
   3,   /* field[3] = attr */
+  8,   /* field[8] = attr_type */
   5,   /* field[5] = cmp */
+  7,   /* field[7] = cnt */
   4,   /* field[4] = l_op */
   6,   /* field[6] = link */
   0,   /* field[0] = name */
@@ -671,7 +793,7 @@ static const unsigned value__field_indices_by_name[] = {
 static const ProtobufCIntRange value__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 7 }
+  { 0, 9 }
 };
 const ProtobufCMessageDescriptor value__descriptor =
 {
@@ -681,7 +803,7 @@ const ProtobufCMessageDescriptor value__descriptor =
   "Value",
   "",
   sizeof(Value),
-  7,
+  9,
   value__field_descriptors,
   value__field_indices_by_name,
   1,  value__number_ranges,
@@ -778,7 +900,7 @@ const ProtobufCMessageDescriptor ast__descriptor =
   (ProtobufCMessageInit) ast__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
-static const ProtobufCEnumValue ast_node_type__enum_values_by_number[14] =
+static const ProtobufCEnumValue ast_node_type__enum_values_by_number[15] =
 {
   { "FILENAME_N", "AST_NODE_TYPE__FILENAME_N", 0 },
   { "INSERT_N", "AST_NODE_TYPE__INSERT_N", 1 },
@@ -794,12 +916,14 @@ static const ProtobufCEnumValue ast_node_type__enum_values_by_number[14] =
   { "VAL_N", "AST_NODE_TYPE__VAL_N", 11 },
   { "NAME_N", "AST_NODE_TYPE__NAME_N", 12 },
   { "LIST_N", "AST_NODE_TYPE__LIST_N", 13 },
+  { "ATTR_DESC_N", "AST_NODE_TYPE__ATTR_DESC_N", 14 },
 };
 static const ProtobufCIntRange ast_node_type__value_ranges[] = {
-{0, 0},{0, 14}
+{0, 0},{0, 15}
 };
-static const ProtobufCEnumValueIndex ast_node_type__enum_values_by_name[14] =
+static const ProtobufCEnumValueIndex ast_node_type__enum_values_by_name[15] =
 {
+  { "ATTR_DESC_N", 14 },
   { "CONDITIONAL_N", 8 },
   { "DELETE_N", 4 },
   { "FILENAME_N", 0 },
@@ -822,9 +946,9 @@ const ProtobufCEnumDescriptor ast_node_type__descriptor =
   "AstNodeType",
   "AstNodeType",
   "",
-  14,
+  15,
   ast_node_type__enum_values_by_number,
-  14,
+  15,
   ast_node_type__enum_values_by_name,
   1,
   ast_node_type__value_ranges,
@@ -958,7 +1082,7 @@ const ProtobufCEnumDescriptor cmp__descriptor =
   cmp__value_ranges,
   NULL,NULL,NULL,NULL   /* reserved[1234] */
 };
-static const ProtobufCEnumValue value_type__enum_values_by_number[8] =
+static const ProtobufCEnumValue value_type__enum_values_by_number[10] =
 {
   { "NONE", "VALUE_TYPE__NONE", 0 },
   { "NAME", "VALUE_TYPE__NAME", 1 },
@@ -968,14 +1092,18 @@ static const ProtobufCEnumValue value_type__enum_values_by_number[8] =
   { "LOGICAL_OP", "VALUE_TYPE__LOGICAL_OP", 5 },
   { "CMP", "VALUE_TYPE__CMP", 6 },
   { "LINK", "VALUE_TYPE__LINK", 7 },
+  { "CNT", "VALUE_TYPE__CNT", 8 },
+  { "ATTR_DESC", "VALUE_TYPE__ATTR_DESC", 9 },
 };
 static const ProtobufCIntRange value_type__value_ranges[] = {
-{0, 0},{0, 8}
+{0, 0},{0, 10}
 };
-static const ProtobufCEnumValueIndex value_type__enum_values_by_name[8] =
+static const ProtobufCEnumValueIndex value_type__enum_values_by_name[10] =
 {
   { "ATTR", 4 },
+  { "ATTR_DESC", 9 },
   { "CMP", 6 },
+  { "CNT", 8 },
   { "INSERT_TARGET", 2 },
   { "LINK", 7 },
   { "LOGICAL_OP", 5 },
@@ -990,9 +1118,9 @@ const ProtobufCEnumDescriptor value_type__descriptor =
   "ValueType",
   "ValueType",
   "",
-  8,
+  10,
   value_type__enum_values_by_number,
-  8,
+  10,
   value_type__enum_values_by_name,
   1,
   value_type__value_ranges,
