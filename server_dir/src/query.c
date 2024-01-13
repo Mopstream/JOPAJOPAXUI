@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include "../includes/query.h"
 #include "stdlib.h"
-
+#include "stdio.h"
 
 void exec(query_t *q) {
     schema_t * schema = init_db(q->filename);
@@ -9,6 +9,9 @@ void exec(query_t *q) {
         case ADD: {
             switch (q->target) {
                 case Q_INDEX: {
+                    printf("query.c 12\n");
+                    printf("SCHEMA!!!!!!: %d\n", schema);
+                    printf("dsfafds: %d\n", q->index);
                     add_index(q->index, schema);
                     break;
                 }

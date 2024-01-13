@@ -78,11 +78,14 @@ void index_enumerate(schema_t * schema);
 typedef enum {
     GREATER,
     LOWER,
-    EQUAL
+    EQUAL,
+    GREATER_EQUAL,
+    LOWER_EQUAL,
+    SUBSTR,
 } cmp_t;
 
 typedef struct cond {
-    char attr_name[16];
+    char *attr_name;
     cmp_t cmp;
     value_t val;
 } cond_t;
@@ -95,4 +98,5 @@ void node_enumerate(schema_t *schema, index_t *index, select_q * select);
 void link_enumerate(schema_t *schema, index_t *index);
 index_t * get_first_index(schema_t *schema, char name[16]);
 index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt);
+node_t *create_node(value_t*values, uint32_t cnt);
 #endif

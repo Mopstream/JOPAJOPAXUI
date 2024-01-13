@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "../spec.pb-c.h"
 #include <arpa/inet.h>
+#include "query_constructor.h"
 
 #define PORT 3110
 #define SA struct sockaddr
@@ -29,7 +30,36 @@ void server_jobs(int connfd, struct sockaddr_in cli) {
             exit(EXIT_FAILURE);
         }
 
-
+        query_t * q = construct(msg);
+//        query_t *q2 = malloc(sizeof(query_t));
+//        q2->filename = "test.db";
+//        q2->target = Q_INDEX;
+//        q2->q_type = ADD;
+//        attr_type_t * attrs = malloc(2*sizeof (attr_type_t));
+//        attrs[0] = (attr_type_t){.type_name = "int_attr", .type = INT};
+//        attrs[1] = (attr_type_t){.type_name = "b_attr", .type = BOOL};
+//        q2->index = create_index("some_name",attrs, 2);
+//        printf("%d\n", q2->index);
+//        for (uint32_t i = 0; i < 16; ++i){
+//            printf("%x %x\n",(q->filename)[i], (q2->filename)[i]);
+//        }
+//        printf("%d %d\n", q->q_type, q2->q_type);
+//        printf("%d %d\n", q->target, q2->target);
+//        index_t * i1 = q->index;
+//        index_t * i2 = q2->index;
+//        printf("\n\n%d %d\n", i1->count, i2->count);
+//        printf("%d %d\n", i1->first_page_num, i2->first_page_num);
+//        element_type_t t1 = i1->type;
+//        element_type_t t2 = i2->type;
+//        printf("\n\n");
+//
+//        printf("%d %d\n", t1.size, t2.size);
+//        for (uint32_t i = 0; i < 16; ++i){
+//            printf("%x %x\n",t1.type_name[i], t2.type_name[i]);
+//        }
+//        printf("\n\n");
+//        printf("%d %d\n", t1.kind, t2.kind);
+        exec(q);
         printf("Received Message: ");
         printf("%zu\n", msg);
         int flag = 1;

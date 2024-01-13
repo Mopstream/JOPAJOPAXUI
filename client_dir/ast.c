@@ -97,7 +97,7 @@ ast_node *list_init(ast_node *val) {
     this->left = val;
     this->v_type = CNT;
     uint32_t * i = malloc(sizeof(uint32_t));
-    *i = 0;
+    *i = 1;
     this->value = i;
     return this;
 }

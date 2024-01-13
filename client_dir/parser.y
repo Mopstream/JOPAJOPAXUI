@@ -113,7 +113,7 @@ insert_body: index_from_name L_BR insert_obj R_BR { $$ = new_insert_node($1, $3)
            | index_from_attrs { $$ = new_insert_node($1, (insert_body_t){.target = I_INDEX, .body = 0}); }
 
 select_body: index_from_name L_BR filter R_BR { $$ = new_select_node($1, $3); }
-
+           | INDEX_T { $$ = new_select_node(0, 0); }
 update_body: index_from_name L_BR set R_BR {$$ = new_update_node($1, $3); }
 
 delete_body: index_from_name L_BR NODE_T L_PR INT_T R_PR R_BR { $$ = new_delete_node($1, new_val_node(new_int_attr($5))); }
@@ -159,7 +159,7 @@ filter: FILTER_T COLON operation { $$ = $3; }
 operation: logical_op { $$ = $1; }
          | compare_op { $$ = $1; }
 
-compare_op: COMPARE_OP L_PR name_node COMMA element R_PR { $$ = new_filter_node(new_conditional_node($3, $1, $5), 0, 0); }
+compare_op: COMPARE_OP L_PR name_node COMMA element R_PR { $$ = new_conditional_node($3, $1, $5); }
 
 logical_op: LOGICAL_UOP L_PR operation R_PR { $$ = new_filter_node($3, 0, $1); }
           | LOGICAL_BOP L_PR operation COMMA operation R_PR { $$ = new_filter_node($3, $5, $1); }

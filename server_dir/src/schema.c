@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 schema_t *init_db(char *filename) {
 
@@ -49,17 +50,33 @@ schema_t *init_db(char *filename) {
 }
 
 chunk_t *encode_index(index_t *index) {
+    printf("schema.c 7\n");
+    printf("JOPAJOPAJOPA\n");
     chunk_t *index_chunk = malloc(sizeof(chunk_t));
+    printf("%d\n", index);
+    printf("AAAAAAAAAAAAAA\n");
+    printf("%d\n", index->type);
+    printf("%d\n", index->type.size);
+    printf("schema.c 7\n");
+    printf("%d\n", index->type.size);
     char *data = malloc(index->type.size + 4 + 4);
+    printf("schema.c 7\n");
     index_chunk->size = index->type.size + 4 + 4;
+    printf("schema.c 7\n");
     char *ptr = data;
+    printf("schema.c 7\n");
     memcpy(ptr, &index->type.size, 4);
+    printf("schema.c 7\n");
     ptr += 4;
     memcpy(ptr, index->type.type_name, 16);
+    printf("schema.c 7\n");
     ptr += 16;
     memcpy(ptr, &index->type.kind, sizeof(element_kind_t));
+    printf("schema.c 7\n");
     ptr += sizeof(element_kind_t);
+    printf("schema.c 7\n");
     if (index->type.kind == I_NODE) {
+        printf("schema.c 73\n");
         memcpy(ptr, &index->type.description.node.type_id, 4);
         ptr += 4;
         memcpy(ptr, &index->type.description.node.attr_count, 4);
@@ -68,15 +85,20 @@ chunk_t *encode_index(index_t *index) {
                index->type.description.node.attr_count * sizeof(attr_type_t));
         ptr += index->type.description.node.attr_count * sizeof(attr_type_t);
     } else {
+        printf("schema.c 82\n");
         memcpy(ptr, &index->type.description.link.type_id, 4);
         ptr += 4;
         memcpy(ptr, index->type.description.link.type_name, 16);
         ptr += 16;
     }
+    printf("schema.c 88\n");
     memcpy(ptr, &index->count, 4);
     ptr += 4;
+    printf("schema.c 7\n");
     memcpy(ptr, &index->first_page_num, 4);
+    printf("schema.c 7\n");
     index_chunk->data = data;
+    printf("schema.c 7\n");
     return index_chunk;
 }
 
@@ -714,7 +736,8 @@ void free_index(index_t *index) {
 
 void add_index(index_t *index, schema_t *schema) {
     page_t *p;
-
+    printf("schema: %d\n", schema);
+    printf("schema.c 719\n");
     struct find_context name_context = find(schema, schema->first_index, find_index_by_name_action,
                                             index->type.type_name);
     if (name_context.thing != 0) {
@@ -722,10 +745,14 @@ void add_index(index_t *index, schema_t *schema) {
         free_index(name_context.thing);
         return;
     }
-
+    printf("schema.c 727\n");
+    printf("AAA: %d\n", index);
     chunk_t *index_chunk = encode_index(index);
-
+    printf("schema.c 729\n");
+    printf("schema: %d\n", schema);
+    printf("%d\n", schema->first_index);
     if (schema->first_index != 0) {
+        printf("schema.c 731\n");
         p = read_page(schema->fd, schema->first_index);
         if (p->header->free_space < index_chunk->size + sizeof(uint32_t)) {
             page_t *new_p = get_free_page(schema);
@@ -741,17 +768,22 @@ void add_index(index_t *index, schema_t *schema) {
             p = new_p;
         }
     } else {
+        printf("schema.c 747\n");
         p = get_free_page(schema);
+        printf("schema.c 750\n");
         p->header->page_type = INDEX;
         p->header->next_page = 0;
         p->header->prev_page = 0;
 
         schema->first_index = p->header->this_page;
     }
-
+    printf("schema.c 756\n");
     add_chunk(schema, p, index_chunk);
+    printf("schema.c 758\n");
     destroy_page(p);
+    printf("schema.c 760\n");
     free(index_chunk);
+    printf("schema.c 762\n");
     save(schema);
 }
 
@@ -762,15 +794,41 @@ index_t *get_first_index(schema_t *schema, char name[16]) {
 }
 
 index_t *create_index(char name[16], attr_type_t *attrs, uint32_t cnt) {
+    printf("name: ");
+    for (uint32_t i = 0; i < 16; ++i){
+        printf("%c", name[i]);
+    }
+    printf("\ncnt = %d\n", cnt);
+    for(uint32_t i = 0; i < cnt; ++i){
+        printf("%d\ntypename: ", i);
+        for (uint32_t j = 0; j < 16; ++j){
+            printf("%c", attrs[i].type_name[j]);
+        }
+        printf("\ntype = %d\n\n", attrs[i].type);
+    }
+
+
     index_t *index = malloc(sizeof(index_t));
-    element_type_t el_type = index->type;
+    element_type_t el_type;
     memcpy(el_type.type_name, name, 16);
     el_type.kind = I_NODE;
-    el_type.description.node.type_id = cnt;
+    el_type.description.node.type_id = clock();
     el_type.description.node.attr_count = cnt;
     el_type.description.node.attr_types = attrs;
     el_type.size = 28 + sizeof(element_kind_t) + cnt * sizeof(attr_type_t);
+    index->type = el_type;
     index->count = 0;
     index->first_page_num = 0;
     return index;
+}
+
+node_t *create_node(value_t *values, uint32_t cnt) {
+    node_t *node = malloc(sizeof(node_t));
+    node->id = clock();
+    node->attrs = values;
+    node->in_cnt = 0;
+    node->out_cnt = 0;
+    node->links_in = 0;
+    node->links_out = 0;
+    return node;
 }
