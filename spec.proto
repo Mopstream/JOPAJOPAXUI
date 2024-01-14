@@ -110,3 +110,7 @@ message Ast {
   ValueType v_type = 4;
   Value val = 5;
 }
+
+message Response {
+  string res = 1;
+}

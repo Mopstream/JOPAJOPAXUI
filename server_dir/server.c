@@ -11,60 +11,24 @@
 #define PORT 3110
 #define SA struct sockaddr
 
+void send_message(Response *msg, int sockfd) {
+    uint64_t message_size = response__get_packed_size(msg);
+    uint8_t *buffer = malloc(message_size);
+    response__pack(msg, buffer);
+    send(sockfd, buffer, message_size, 0);
+    free(buffer);
+}
 
 void server_jobs(int connfd, struct sockaddr_in cli) {
-
     for (;;) {
         uint8_t buffer[1024];
         uint64_t bytes_received = recv(connfd, &buffer, 1024, 0);
-        if (!bytes_received) {
-            printf("Disconnected!\n");
-            return;
-        }
-
         Ast *msg = ast__unpack(NULL, bytes_received, buffer);
-
-        if (msg == NULL) {
-            fprintf(stderr, "Error unpacking the message\n");
-            close(connfd);
-            exit(EXIT_FAILURE);
-        }
-
         query_t * q = construct(msg);
-//        query_t *q2 = malloc(sizeof(query_t));
-//        q2->filename = "test.db";
-//        q2->target = Q_INDEX;
-//        q2->q_type = ADD;
-//        attr_type_t * attrs = malloc(2*sizeof (attr_type_t));
-//        attrs[0] = (attr_type_t){.type_name = "int_attr", .type = INT};
-//        attrs[1] = (attr_type_t){.type_name = "b_attr", .type = BOOL};
-//        q2->index = create_index("some_name",attrs, 2);
-//        printf("%d\n", q2->index);
-//        for (uint32_t i = 0; i < 16; ++i){
-//            printf("%x %x\n",(q->filename)[i], (q2->filename)[i]);
-//        }
-//        printf("%d %d\n", q->q_type, q2->q_type);
-//        printf("%d %d\n", q->target, q2->target);
-//        index_t * i1 = q->index;
-//        index_t * i2 = q2->index;
-//        printf("\n\n%d %d\n", i1->count, i2->count);
-//        printf("%d %d\n", i1->first_page_num, i2->first_page_num);
-//        element_type_t t1 = i1->type;
-//        element_type_t t2 = i2->type;
-//        printf("\n\n");
-//
-//        printf("%d %d\n", t1.size, t2.size);
-//        for (uint32_t i = 0; i < 16; ++i){
-//            printf("%x %x\n",t1.type_name[i], t2.type_name[i]);
-//        }
-//        printf("\n\n");
-//        printf("%d %d\n", t1.kind, t2.kind);
-        exec(q);
-        printf("Received Message: ");
-        printf("%zu\n", msg);
-        int flag = 1;
-        send(connfd, &flag, sizeof(int), 0);
-
+        char * res_str = exec(q);
+        Response res = RESPONSE__INIT;
+        res.res = res_str;
+        send_message(&res, connfd);
         ast__free_unpacked(msg, NULL);
     }
 

@@ -47,6 +47,7 @@ cond_t parse_cond(Ast *c) {
             fprintf(stderr, "PROGRAMMAN TUPOY!!!!\n");
         }
     }
+    return cond;
 }
 
 void parse_log(Ast *op, uint32_t *cnt, cond_t **conditionals) {
@@ -64,7 +65,7 @@ void parse_log(Ast *op, uint32_t *cnt, cond_t **conditionals) {
 
 query_t *construct(Ast *ast) {
     query_t *q = malloc(sizeof(query_t));
-    q->filename = ast->val->name;
+    memcpy(q->filename, ast->val->name, strlen(ast->val->name));
     Ast *query_ast = ast->left;
     Ast *index_ast = query_ast->left;
     if (!index_ast) {
@@ -73,7 +74,7 @@ query_t *construct(Ast *ast) {
         q->index = 0;
         return q;
     }
-    if (!query_ast->right) {
+    if (!query_ast->right && query_ast->type == AST_NODE_TYPE__INSERT_N) {
         char *index_name = index_ast->val->name;
         Ast *attrs_list = index_ast->left;
         uint32_t cnt = attrs_list->val->cnt;
@@ -81,7 +82,7 @@ query_t *construct(Ast *ast) {
         for (uint32_t i = 0; i < cnt; ++i) {
             Ast *attr = attrs_list->left;
             AttrType *curr_attr = attr->val->attr_type;
-            memcpy(attrs[i].type_name, curr_attr->name, 16);
+            memcpy(attrs[i].type_name, curr_attr->name, strlen(curr_attr->name));
             attrs[i].type = attr_types[curr_attr->val];
             attrs_list = attrs_list->right;
         }
@@ -196,10 +197,18 @@ query_t *construct(Ast *ast) {
     q->q_type = SELECT;
     q->target = Q_NODE;
     Ast *operation = body;
+    select_q *sel = malloc(sizeof(select_q));
     uint32_t cond_cnt = 0;
     cond_t *conditionals;
-    parse_log(operation, &cond_cnt, &conditionals);
-    select_q * sel = malloc(sizeof(select_q));
+    if (operation) {
+        if (operation->type == AST_NODE_TYPE__FILTER_N) {
+            parse_log(operation, &cond_cnt, &conditionals);
+        } else {
+            cond_cnt = 1;
+            conditionals = malloc(sizeof(cond_t));
+            *conditionals = parse_cond(operation);
+        }
+    }
     sel->conditionals = conditionals;
     sel->cond_cnt = cond_cnt;
     q->query_body.sel = sel;

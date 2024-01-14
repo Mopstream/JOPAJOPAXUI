@@ -73,7 +73,7 @@ void delete_node_by_id(schema_t *schema, index_t *index, uint32_t node_id);
 
 void set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr_name[16], value_t new_value);
 
-void index_enumerate(schema_t * schema);
+char * index_enumerate(schema_t * schema);
 
 typedef enum {
     GREATER,
@@ -94,7 +94,7 @@ typedef struct{
     uint32_t cond_cnt;
     cond_t * conditionals;
 } select_q;
-void node_enumerate(schema_t *schema, index_t *index, select_q * select);
+char * node_enumerate(schema_t *schema, index_t *index, select_q * select);
 void link_enumerate(schema_t *schema, index_t *index);
 index_t * get_first_index(schema_t *schema, char name[16]);
 index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt);

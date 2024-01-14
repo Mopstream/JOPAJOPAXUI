@@ -113,6 +113,7 @@ insert_body: index_from_name L_BR insert_obj R_BR { $$ = new_insert_node($1, $3)
            | index_from_attrs { $$ = new_insert_node($1, (insert_body_t){.target = I_INDEX, .body = 0}); }
 
 select_body: index_from_name L_BR filter R_BR { $$ = new_select_node($1, $3); }
+           | index_from_name { $$ = new_select_node($1, 0); }
            | INDEX_T { $$ = new_select_node(0, 0); }
 update_body: index_from_name L_BR set R_BR {$$ = new_update_node($1, $3); }
 

@@ -57,12 +57,8 @@ void destroy_page(page_t *page) {
 }
 
 page_t *alloc_page(void) {
-    printf("page.c 60\n");
-    printf("%lu\n", sizeof(page_t));
     page_t *p = malloc(sizeof(page_t));
-    printf("page.c 62\n");
     p->header = alloc_header();
-    printf("page.c 64\n");
     p->chunks = 0;
     return p;
 }
@@ -115,10 +111,8 @@ void free_page(schema_t *schema, uint32_t num) {
 }
 
 page_t *get_free_page(schema_t *schema) {
-    printf("page.c 114\n");
     page_t *p;
     if (schema->free_page != 0) {
-        printf("page.c 117\n");
         p = read_page(schema->fd, schema->free_page);
         schema->free_page = p->header->next_page;
 
@@ -129,9 +123,7 @@ page_t *get_free_page(schema_t *schema) {
 
         --schema->cnt_free;
     } else {
-        printf("page.c 128\n");
         p = alloc_page();
-        printf("page.c 130\n");
         p->header->this_page = ++schema->last_page_num;
     }
     save(schema);
@@ -222,7 +214,6 @@ void shrink(schema_t *schema) {
     }
     ftruncate(schema->fd, (schema->last_page_num - schema->cnt_free + 1) * PAGE_SIZE);
     schema->last_page_num = schema->last_page_num - schema->cnt_free;
-    printf("%d\n", schema->last_page_num);
     schema->cnt_free = 0;
     schema->free_page = 0;
     save(schema);

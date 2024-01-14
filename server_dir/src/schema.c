@@ -50,33 +50,17 @@ schema_t *init_db(char *filename) {
 }
 
 chunk_t *encode_index(index_t *index) {
-    printf("schema.c 7\n");
-    printf("JOPAJOPAJOPA\n");
     chunk_t *index_chunk = malloc(sizeof(chunk_t));
-    printf("%d\n", index);
-    printf("AAAAAAAAAAAAAA\n");
-    printf("%d\n", index->type);
-    printf("%d\n", index->type.size);
-    printf("schema.c 7\n");
-    printf("%d\n", index->type.size);
     char *data = malloc(index->type.size + 4 + 4);
-    printf("schema.c 7\n");
     index_chunk->size = index->type.size + 4 + 4;
-    printf("schema.c 7\n");
     char *ptr = data;
-    printf("schema.c 7\n");
     memcpy(ptr, &index->type.size, 4);
-    printf("schema.c 7\n");
     ptr += 4;
     memcpy(ptr, index->type.type_name, 16);
-    printf("schema.c 7\n");
     ptr += 16;
     memcpy(ptr, &index->type.kind, sizeof(element_kind_t));
-    printf("schema.c 7\n");
     ptr += sizeof(element_kind_t);
-    printf("schema.c 7\n");
     if (index->type.kind == I_NODE) {
-        printf("schema.c 73\n");
         memcpy(ptr, &index->type.description.node.type_id, 4);
         ptr += 4;
         memcpy(ptr, &index->type.description.node.attr_count, 4);
@@ -85,20 +69,15 @@ chunk_t *encode_index(index_t *index) {
                index->type.description.node.attr_count * sizeof(attr_type_t));
         ptr += index->type.description.node.attr_count * sizeof(attr_type_t);
     } else {
-        printf("schema.c 82\n");
         memcpy(ptr, &index->type.description.link.type_id, 4);
         ptr += 4;
         memcpy(ptr, index->type.description.link.type_name, 16);
         ptr += 16;
     }
-    printf("schema.c 88\n");
     memcpy(ptr, &index->count, 4);
     ptr += 4;
-    printf("schema.c 7\n");
     memcpy(ptr, &index->first_page_num, 4);
-    printf("schema.c 7\n");
     index_chunk->data = data;
-    printf("schema.c 7\n");
     return index_chunk;
 }
 
@@ -294,52 +273,53 @@ void save_index(schema_t *schema, index_t *index) {
 }
 
 struct find_context index_enumerating_action(struct find_context context, void *extra) {
+    char **res = (char **) extra;
     index_t *index = decode_index(context.thing);
-    printf("===== INDEX ====\n");
-    printf("name: %s\n", index->type.type_name);
-    printf("kind: %s\n", index->type.kind == I_NODE ? "node" : "link");
-    printf("elements count: %d\n", index->count);
-    printf("type id: %d\n", index->type.description.node.type_id);
+    asprintf(res, "%s===== INDEX ====\n", *res);
+    asprintf(res, "%sname: %s\n", *res, index->type.type_name);
+    asprintf(res, "%skind: %s\n", *res, index->type.kind == I_NODE ? "node" : "link");
+    asprintf(res, "%selements count: %d\n", *res, index->count);
+    asprintf(res, "%stype id: %d\n", *res, index->type.description.node.type_id);
     if (index->type.kind == I_NODE) {
-        printf("attributes count: %d\n", index->type.description.node.attr_count);
+        asprintf(res, "%sattributes count: %d\n", *res, index->type.description.node.attr_count);
         for (uint32_t i = 0; i < index->type.description.node.attr_count; ++i) {
-            printf("%s\n", index->type.description.node.attr_types[i].type_name);
+            asprintf(res, "%s%s\n", *res, index->type.description.node.attr_types[i].type_name);
         }
     } else {
-        printf("type name: %s\n", index->type.description.link.type_name);
+        asprintf(res, "%stype name: %s\n", *res, index->type.description.link.type_name);
     }
-    printf("==============\n\n");
+    asprintf(res, "%s==============\n\n", *res);
     free_index(index);
     return (struct find_context) {0};
 }
 
-void print_node(node_t *node, index_t *index) {
-    printf("===== NODE =====\n");
-    printf("name: %s\n", index->type.type_name);
-    printf("id: %d\n", node->id);
-    printf("attributes:\n");
+void print_node(node_t *node, index_t *index, char ** res) {
+    asprintf(res, "%s===== NODE =====\n", *res);
+    asprintf(res, "%sname: %s\n", *res, index->type.type_name);
+    asprintf(res, "%sid: %d\n", *res, node->id);
+    asprintf(res, "%sattributes:\n", *res);
     for (uint32_t i = 0; i < index->type.description.node.attr_count; ++i) {
         if (index->type.description.node.attr_types[i].type == INT)
-            printf("%s = %d\n", index->type.description.node.attr_types[i].type_name, node->attrs[i].i);
+            asprintf(res, "%s%s = %d\n", *res, index->type.description.node.attr_types[i].type_name, node->attrs[i].i);
         if (index->type.description.node.attr_types[i].type == DOUBLE)
-            printf("%s = %f\n", index->type.description.node.attr_types[i].type_name, node->attrs[i].d);
+            asprintf(res, "%s%s = %f\n", *res, index->type.description.node.attr_types[i].type_name, node->attrs[i].d);
         if (index->type.description.node.attr_types[i].type == STRING)
-            printf("%s = %s\n", index->type.description.node.attr_types[i].type_name, node->attrs[i].str.str);
+            asprintf(res, "%s%s = %s\n", *res, index->type.description.node.attr_types[i].type_name, node->attrs[i].str.str);
         if (index->type.description.node.attr_types[i].type == BOOL)
-            printf("%s = %d\n", index->type.description.node.attr_types[i].type_name, node->attrs[i].b);
+            asprintf(res, "%s%s = %d\n", *res, index->type.description.node.attr_types[i].type_name, node->attrs[i].b);
     }
-    printf("\nlinks out:\n");
+    asprintf(res, "%s\nlinks out:\n", *res);
     for (uint32_t i = 0; i < node->out_cnt; ++i) {
-        printf("%d. link type id = %d, link id = %d\n", i + 1, node->links_out[i].link_type_id,
+        asprintf(res, "%s%d. link type id = %d, link id = %d\n", *res, i + 1, node->links_out[i].link_type_id,
                node->links_out[i].link_id);
     }
 
-    printf("\nlinks in:\n");
+    asprintf(res, "%s\nlinks in:\n", *res);
     for (uint32_t i = 0; i < node->in_cnt; ++i) {
-        printf("%d. link type id = %d, link id = %d\n", i + 1, node->links_in[i].link_type_id,
+        asprintf(res, "%s%d. link type id = %d, link id = %d\n", *res, i + 1, node->links_in[i].link_type_id,
                node->links_in[i].link_id);
     }
-    printf("===========\n\n");
+    asprintf(res, "%s===========\n\n", *res);
 }
 
 void print_link(link_t *link) {
@@ -356,6 +336,7 @@ struct find_context node_enumerating_action(struct find_context context, void *e
     struct {
         index_t *index;
         select_q *conditionals;
+        char ** res;
     } *cond = extra;
     node_t *node = decode_node(context.thing, cond->index);
     bool flag = true;
@@ -442,7 +423,7 @@ struct find_context node_enumerating_action(struct find_context context, void *e
         }
         if (!flag) break;
     }
-    if (flag) print_node(node, cond->index);
+    if (flag) print_node(node, cond->index, cond->res);
 
     free_node(cond->index, node);
     return (struct find_context) {0};
@@ -496,19 +477,31 @@ struct find_context find_node_by_id_action(struct find_context context, void *ex
     return (struct find_context) {0};
 }
 
-void index_enumerate(schema_t *schema) {
-    find(schema, schema->first_index, index_enumerating_action, 0);
+char *index_enumerate(schema_t *schema) {
+    char *res;
+    asprintf(&res, "### S T A R T ###\n");
+    find(schema, schema->first_index, index_enumerating_action, &res);
+    asprintf(&res,"%s### F I N I S H ###\n",res);
+    return res;
 }
 
-void node_enumerate(schema_t *schema, index_t *index, select_q *conditionals) {
+char * node_enumerate(schema_t *schema, index_t *index, select_q *conditionals) {
+    char * res;
     struct {
         index_t *index;
         select_q *conditionals;
+        char ** mes;
     } *extra = malloc(sizeof(struct {
         index_t *index;
         select_q *conditionals;
     }));
+    extra->index = index;
+    extra->conditionals = conditionals;
+    extra->mes = &res;
+    asprintf(&res, "### S T A R T ###\n");
     find(schema, index->first_page_num, node_enumerating_action, extra);
+    asprintf(&res,"%s### F I N I S H ###\n",res);
+    return res;
 }
 
 void link_enumerate(schema_t *schema, index_t *index) {
@@ -736,8 +729,6 @@ void free_index(index_t *index) {
 
 void add_index(index_t *index, schema_t *schema) {
     page_t *p;
-    printf("schema: %d\n", schema);
-    printf("schema.c 719\n");
     struct find_context name_context = find(schema, schema->first_index, find_index_by_name_action,
                                             index->type.type_name);
     if (name_context.thing != 0) {
@@ -745,14 +736,8 @@ void add_index(index_t *index, schema_t *schema) {
         free_index(name_context.thing);
         return;
     }
-    printf("schema.c 727\n");
-    printf("AAA: %d\n", index);
     chunk_t *index_chunk = encode_index(index);
-    printf("schema.c 729\n");
-    printf("schema: %d\n", schema);
-    printf("%d\n", schema->first_index);
     if (schema->first_index != 0) {
-        printf("schema.c 731\n");
         p = read_page(schema->fd, schema->first_index);
         if (p->header->free_space < index_chunk->size + sizeof(uint32_t)) {
             page_t *new_p = get_free_page(schema);
@@ -768,22 +753,16 @@ void add_index(index_t *index, schema_t *schema) {
             p = new_p;
         }
     } else {
-        printf("schema.c 747\n");
         p = get_free_page(schema);
-        printf("schema.c 750\n");
         p->header->page_type = INDEX;
         p->header->next_page = 0;
         p->header->prev_page = 0;
 
         schema->first_index = p->header->this_page;
     }
-    printf("schema.c 756\n");
     add_chunk(schema, p, index_chunk);
-    printf("schema.c 758\n");
     destroy_page(p);
-    printf("schema.c 760\n");
     free(index_chunk);
-    printf("schema.c 762\n");
     save(schema);
 }
 
@@ -794,20 +773,6 @@ index_t *get_first_index(schema_t *schema, char name[16]) {
 }
 
 index_t *create_index(char name[16], attr_type_t *attrs, uint32_t cnt) {
-    printf("name: ");
-    for (uint32_t i = 0; i < 16; ++i){
-        printf("%c", name[i]);
-    }
-    printf("\ncnt = %d\n", cnt);
-    for(uint32_t i = 0; i < cnt; ++i){
-        printf("%d\ntypename: ", i);
-        for (uint32_t j = 0; j < 16; ++j){
-            printf("%c", attrs[i].type_name[j]);
-        }
-        printf("\ntype = %d\n\n", attrs[i].type);
-    }
-
-
     index_t *index = malloc(sizeof(index_t));
     element_type_t el_type;
     memcpy(el_type.type_name, name, 16);

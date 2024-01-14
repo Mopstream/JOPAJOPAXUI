@@ -51,7 +51,7 @@ typedef struct {
 } set_q;
 
 typedef struct {
-    char * filename;
+    char filename[16];
     query_type q_type;
     query_target target;
     index_t *index;
@@ -63,6 +63,6 @@ typedef struct {
     } query_body;
 } query_t;
 
-void exec(query_t * q);
+char * exec(query_t * q);
 
 #endif

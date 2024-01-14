@@ -4,6 +4,8 @@
 #include <strings.h>
 #include <sys/socket.h>
 #include "converter.h"
+#include "printer.h"
+#include "../spec.pb-c.h"
 
 #define PORT 3110
 #define SA struct sockaddr
@@ -38,21 +40,20 @@ int main() {
         exit(0);
     }
 
-    yyparse();
-    Ast *msg = convert(ast);
-    int flag = 1;
 
-    send_message(msg, sockfd);
-    for (;;) {
-        recv(sockfd, &flag, 1024, 0);
-//        printf("\n %d\n", flag);
-        if (flag) {
-            yyparse();
-            Ast *msg = convert(ast);
-            send_message(msg, sockfd);
-            flag = 0;
-        }
-    }
+    Ast *msg;
+    uint8_t buf[1024];
+
+    do {
+        yyparse();
+        msg = convert(ast);
+        send_message(msg, sockfd);
+
+        uint64_t recieved = recv(sockfd, &buf, 1024, 0);
+        Response * res = response__unpack(NULL, recieved, buf);
+        printf("%s", res->res);
+        response__free_unpacked(res, NULL);
+    } while (true);
 
     return 0;
 }
