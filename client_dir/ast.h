@@ -53,7 +53,6 @@ typedef struct {
 } set_t;
 
 typedef struct {
-    uint32_t link_id;
     uint32_t node_from_type_id;
     uint32_t node_from_id;
     uint32_t node_to_type_id;
@@ -116,7 +115,7 @@ attr_t *new_str_attr(char *str_val, uint32_t size);
 
 ast_node *new_name_node(char name[16]);
 
-ast_node *new_attr_node(char name[16], val_type_t type);
+ast_node *new_attr_node(char * name, val_type_t type);
 
 ast_node *list_init(ast_node *val);
 

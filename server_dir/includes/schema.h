@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "../../spec.pb-c.h"
 
 typedef enum {
     INT,
@@ -17,16 +18,9 @@ typedef struct {
 } attr_type_t;
 
 typedef struct {
-    uint32_t type_id;
     uint32_t attr_count;
     attr_type_t *attr_types;
 } node_type_t;
-
-typedef struct link_type {
-    uint32_t type_id;
-    char type_name[16];
-} link_type_t;
-
 
 typedef struct {
     uint32_t fd;
@@ -57,23 +51,23 @@ chunk_t *encode_index(index_t *index);
 
 index_t *decode_index(char *data);
 
-void add_index(index_t *index, schema_t *schema);
+Response *add_index(index_t *index, schema_t *schema);
 
-void delete_index_by_name(schema_t *schema, char name[16]);
+Response *delete_index_by_name(schema_t *schema, char name[16]);
 
-void add_node(schema_t *schema, index_t *index, node_t *node);
+Response *add_node(schema_t *schema, index_t *index, node_t *node);
 
-void add_link(schema_t *schema, index_t *index, link_t *link);
+Response *add_link(schema_t *schema, index_t *index, link_t *link);
 
 void free_index(index_t *index);
 
-void delete_link_by_id(schema_t *schema, index_t * index, uint32_t link_id);
+Response *delete_link_by_id(schema_t *schema, index_t * index, uint32_t link_id);
 
-void delete_node_by_id(schema_t *schema, index_t *index, uint32_t node_id);
+Response *delete_node_by_id(schema_t *schema, index_t *index, uint32_t node_id);
 
-void set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr_name[16], value_t new_value);
+Response *set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr_name[16], value_t new_value);
 
-char * index_enumerate(schema_t * schema);
+Response * index_enumerate(schema_t * schema);
 
 typedef enum {
     GREATER,
@@ -94,9 +88,16 @@ typedef struct{
     uint32_t cond_cnt;
     cond_t * conditionals;
 } select_q;
-char * node_enumerate(schema_t *schema, index_t *index, select_q * select);
-void link_enumerate(schema_t *schema, index_t *index);
+Response * node_enumerate(schema_t *schema, index_t *index, select_q * select);
+Response *link_enumerate(schema_t *schema, index_t *index);
 index_t * get_first_index(schema_t *schema, char name[16]);
-index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt);
+index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt, element_kind_t kind);
 node_t *create_node(value_t*values, uint32_t cnt);
+link_t *create_link(uint32_t node_from_id, uint32_t node_from_type_id, uint32_t node_to_id, uint32_t node_to_type_id);
+Index *construct_index(index_t *index);
+NodeType *convert_node_description(node_type_t type);
+AttrType *convert_attr_type(attr_type_t type);
+Node * construct_node(node_t* node, index_t * index);
+LinkRef *convert_link_ref(link_ref_t link);
+Link *convert_link(link_t * link);
 #endif

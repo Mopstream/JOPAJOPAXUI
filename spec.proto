@@ -86,7 +86,7 @@ enum ValueType {
   ATTR_DESC = 9;
 }
 
-message Attr_Type {
+message AttrType {
   string name = 1;
   ValType val = 2;
 }
@@ -100,7 +100,7 @@ message Value {
   Cmp cmp = 6;
   Link link = 7;
   uint32 cnt = 8;
-  Attr_Type attr_type = 9;
+  AttrType attr_type = 9;
 }
 
 message Ast {
@@ -111,6 +111,48 @@ message Ast {
   Value val = 5;
 }
 
+enum ResponseType {
+  NODE_R = 0;
+  LINK_R = 1;
+  INDEX_R = 2;
+  STATUS_R = 3;
+}
+
+message LinkRef {
+  uint32 link_type_id = 1;
+  uint32 link_id = 2;
+}
+
+message Node {
+  uint32 id = 1;
+  repeated Attr attrs = 2;
+  repeated LinkRef links_out = 3;
+  repeated LinkRef links_in = 4;
+}
+
+enum ElementKind {
+  NODE_I = 0;
+  LINK_I = 1;
+}
+
+message NodeType {
+  repeated AttrType attrs = 1;
+}
+
+message Index {
+  string type_name = 1;
+  ElementKind kind = 2;
+  uint32 type_id = 3;
+  NodeType description = 4;
+  uint32 count = 5;
+}
+
 message Response {
-  string res = 1;
+  ResponseType type = 1;
+  string status = 2;
+  Node node = 4;
+  Link link = 5;
+  Index index = 6;
+  Response inner = 7;
+  Response response = 8;
 }

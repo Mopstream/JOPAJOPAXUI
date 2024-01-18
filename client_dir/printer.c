@@ -108,7 +108,6 @@ void print_value(ast_node *node, int32_t nesting_level) {
         }
         case LINK_N: {
             link_t *l = node->value;
-            printf("%*slink_id = %d\n", nesting_level, "", l->link_id);
             printf("%*snode_from_type_id = %d, node_from_id = %d\n", nesting_level, "", l->node_from_type_id,
                    l->node_from_id);
             printf("%*snode_to_type_id = %d, node_to_id = %d\n", nesting_level, "", l->node_to_type_id, l->node_to_id);
@@ -147,3 +146,72 @@ void print_node(ast_node *node, int32_t nesting_level) {
     }
 }
 
+void print_response(Response *res, int32_t nesting_level) {
+    if (res) {
+        switch (res->type) {
+            case RESPONSE_TYPE__STATUS_R: {
+                printf("%*sMessage: %s\n", nesting_level, "", res->status);
+                break;
+            }
+            case RESPONSE_TYPE__NODE_R: {
+                Index *index = res->index;
+                Node *node = res->node;
+                printf("%*s===== NODE =====\n", nesting_level, "");
+                printf("%*sid: %d\n", nesting_level, "", node->id);
+                printf("%*sattributes:\n", nesting_level, "");
+                for (uint32_t i = 0; i < node->n_attrs; ++i) {
+                    printf("%*s%s = ", nesting_level, "", index->description->attrs[i]->name);
+                    if (node->attrs[i]->type == VAL_TYPE__INT) printf("%d\n", node->attrs[i]->i);
+                    if (node->attrs[i]->type == VAL_TYPE__DOUBLE) printf("%f\n", node->attrs[i]->d);
+                    if (node->attrs[i]->type == VAL_TYPE__STRING) printf("%s\n", node->attrs[i]->str->str);
+                    if (node->attrs[i]->type == VAL_TYPE__BOOL)
+                        printf((node->attrs[i]->b == true) ? "true\n" : "false\n");
+                }
+                printf("%*s\nlinks out:\n", nesting_level, "");
+                for (uint32_t i = 0; i < node->n_links_out; ++i) {
+                    printf("%*s%d. link type id = %d, link id = %d\n", nesting_level, "", i + 1,
+                           node->links_out[i]->link_type_id,
+                           node->links_out[i]->link_id);
+                }
+
+                printf("%*s\nlinks in:\n", nesting_level, "");
+                for (uint32_t i = 0; i < node->n_links_in; ++i) {
+                    printf("%*s%d. link type id = %d, link id = %d\n", nesting_level, "", i + 1,
+                           node->links_in[i]->link_type_id,
+                           node->links_in[i]->link_id);
+                }
+                printf("%*s===========\n\n", nesting_level, "");
+                break;
+            }
+            case RESPONSE_TYPE__LINK_R: {
+                Link *link = res->link;
+                printf("%*s==== LINK =====\n", nesting_level, "");
+                printf("%*slink id: %d\n", nesting_level, "", link->link_id);
+                printf("%*snode from type id: %d\n", nesting_level, "", link->node_from_type_id);
+                printf("%*snode_from_id: %d\n", nesting_level, "", link->node_from_id);
+                printf("%*snode_to_type_id: %d\n", nesting_level, "", link->node_to_type_id);
+                printf("%*snode_to_id: %d\n", nesting_level, "", link->node_to_id);
+                printf("%*s==========\n\n", nesting_level, "");
+                break;
+            }
+            case RESPONSE_TYPE__INDEX_R: {
+                Index *index = res->index;
+                printf("%*s===== INDEX ====\n", nesting_level, "");
+                printf("%*sname: %s\n", nesting_level, "", index->type_name);
+                printf("%*skind: %s\n", nesting_level, "", index->kind == ELEMENT_KIND__NODE_I ? "node" : "link");
+                printf("%*selements count: %d\n", nesting_level, "", index->count);
+                printf("%*stype id: %d\n", nesting_level, "", index->type_id);
+                if (index->kind == ELEMENT_KIND__NODE_I) {
+                    printf("%*sattributes count: %lu\n", nesting_level, "", index->description->n_attrs);
+                    for (uint32_t i = 0; i < index->description->n_attrs; ++i) {
+                        printf("%*s%s\n", nesting_level, "", index->description->attrs[i]->name);
+                    }
+                }
+                printf("%*s==============\n\n", nesting_level, "");
+                break;
+            }
+        }
+        print_response(res->inner, nesting_level + 8);
+        print_response(res->response, nesting_level);
+    }
+}

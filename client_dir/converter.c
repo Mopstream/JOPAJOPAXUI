@@ -1,6 +1,7 @@
 #include "converter.h"
 #include "types.h"
 #include <stdlib.h>
+#include "stdio.h"
 
 enum _AstNodeType node_types[] = {
         [FILENAME_N] = AST_NODE_TYPE__FILENAME_N,
@@ -135,7 +136,6 @@ Ast *convert(ast_node *node) {
             v->link = l;
             link__init(l);
             link_t *link = node->value;
-            l->link_id = link->link_id;
             l->node_from_type_id = link->node_from_type_id;
             l->node_from_id = link->node_from_id;
             l->node_to_type_id = link->node_to_type_id;
@@ -150,7 +150,7 @@ Ast *convert(ast_node *node) {
         case ATTR_DESC: {
             AttrType *attr_type = malloc(sizeof(AttrType));
             v->attr_type = attr_type;
-            attr__type__init(attr_type);
+            attr_type__init(attr_type);
             attr_desc_t *desc = node->value;
             attr_type->name = desc->name;
             attr_type->val = val_types[desc->type];

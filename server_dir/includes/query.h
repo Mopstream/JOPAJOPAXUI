@@ -3,6 +3,7 @@
 
 #include "schema.h"
 #include "node.h"
+#include "../../spec.pb-c.h"
 
 typedef enum {
     ADD,
@@ -63,6 +64,6 @@ typedef struct {
     } query_body;
 } query_t;
 
-char * exec(query_t * q);
+Response *exec(query_t * q);
 
 #endif

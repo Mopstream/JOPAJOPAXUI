@@ -45,13 +45,14 @@ int main() {
     uint8_t buf[1024];
 
     do {
+        printf("> ");
         yyparse();
         msg = convert(ast);
         send_message(msg, sockfd);
 
         uint64_t recieved = recv(sockfd, &buf, 1024, 0);
-        Response * res = response__unpack(NULL, recieved, buf);
-        printf("%s", res->res);
+        Response *res = response__unpack(NULL, recieved, buf);
+        print_response(res, 0);
         response__free_unpacked(res, NULL);
     } while (true);
 

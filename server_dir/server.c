@@ -22,13 +22,11 @@ void send_message(Response *msg, int sockfd) {
 void server_jobs(int connfd, struct sockaddr_in cli) {
     for (;;) {
         uint8_t buffer[1024];
-        uint64_t bytes_received = recv(connfd, &buffer, 1024, 0);
+        uint64_t bytes_received = recv(connfd, &buffer, 4096, 0);
         Ast *msg = ast__unpack(NULL, bytes_received, buffer);
-        query_t * q = construct(msg);
-        char * res_str = exec(q);
-        Response res = RESPONSE__INIT;
-        res.res = res_str;
-        send_message(&res, connfd);
+        query_t *q = construct(msg);
+        Response *res = exec(q);
+        send_message(res, connfd);
         ast__free_unpacked(msg, NULL);
     }
 

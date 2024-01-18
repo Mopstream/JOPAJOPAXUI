@@ -11,18 +11,24 @@
   <component name="ChangeListManager">
     <list default="true" id="6b453759-1451-4b43-b1e3-f2e118a2918b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client" beforeDir="false" afterPath="$PROJECT_DIR$/client" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/parser.tab.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/parser.tab.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/ast.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/ast.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/client" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/client.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/client.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/converter.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/converter.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_dir/parser.y" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/parser.y" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server" beforeDir="false" afterPath="$PROJECT_DIR$/server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/printer.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client_dir/printer.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_dir/includes/index.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/index.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_dir/includes/query.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/query.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/includes/schema.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/schema.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_dir/main.c" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/query_constructor.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/query_constructor.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/server" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/server.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/src/page.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/page.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/src/query.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/query.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/src/schema.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/schema.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec.proto" beforeDir="false" afterPath="$PROJECT_DIR$/spec.proto" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +71,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;tools.buf&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
     &quot;structure.view.defaults.are.configured&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -117,12 +123,30 @@
       <workItem from="1704977883025" duration="3376000" />
       <workItem from="1704982582306" duration="27718000" />
       <workItem from="1705093586775" duration="17963000" />
-      <workItem from="1705158345438" duration="316000" />
+      <workItem from="1705158345438" duration="41487000" />
+      <workItem from="1705485932735" duration="298000" />
+      <workItem from="1705518198370" duration="29992000" />
+      <workItem from="1705599292316" duration="120000" />
+      <workItem from="1705599420908" duration="23000" />
+      <workItem from="1705599454075" duration="7000" />
+      <workItem from="1705599471779" duration="1572000" />
+      <workItem from="1705601342515" duration="5431000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/server_dir/includes/schema.h</url>
+          <line>7</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

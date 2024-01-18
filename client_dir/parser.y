@@ -123,7 +123,8 @@ delete_body: index_from_name L_BR NODE_T L_PR INT_T R_PR R_BR { $$ = new_delete_
 
 index_from_name : INDEX_T L_PR INDEX_NAME COLON name R_PR { $$ = new_index_node_from_name($5); }
 
-index_from_attrs : INDEX_T L_PR INDEX_NAME COLON name COMMA NAMES L_BRK attr_list R_BRK R_PR { $$ = new_index_node_from_attrs($5, $9); }
+index_from_attrs : INDEX_T L_PR NODE_T L_PR INDEX_NAME COLON name COMMA NAMES L_BRK attr_list R_BRK R_PR R_PR { $$ = new_index_node_from_attrs($7, $11); }
+                 | INDEX_T L_PR LINK_T L_PR INDEX_NAME COLON name R_PR R_PR { $$ = new_index_node_from_attrs($7, 0); }
 
 attr_list : attr COMMA attr_list { $$ = add_to_list($3, $1); }
           | attr { $$ = list_init($1); }
@@ -149,11 +150,10 @@ value: BOOL_T { $$ = new_bool_attr($1); }
      | DOUBLE_T { $$ = new_double_attr($1); }
      | STRING_T { $$ = new_str_attr($1, strlen($1)); }
 
-link: LINK_T L_PR INT_T COMMA L_PR INT_T COMMA INT_T R_PR COMMA L_PR INT_T COMMA INT_T R_PR R_PR { $$ = new_link_node((link_t){.link_id = $3,
-                                                                                                                   .node_from_type_id = $6,
-                                                                                                                   .node_from_id = $8,
-                                                                                                                   .node_to_type_id = $12,
-                                                                                                                   .node_to_id = $14}); }
+link: LINK_T L_PR L_PR INT_T COMMA INT_T R_PR COMMA L_PR INT_T COMMA INT_T R_PR R_PR { $$ = new_link_node((link_t){.node_from_type_id = $4,
+                                                                                                                   .node_from_id = $6,
+                                                                                                                   .node_to_type_id = $10,
+                                                                                                                   .node_to_id = $12}); }
 
 filter: FILTER_T COLON operation { $$ = $3; }
 

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "ast.h"
 #include "string.h"
+#include "stdio.h"
 
 ast_node *create_node() {
     ast_node *node = malloc(sizeof(ast_node));
@@ -198,13 +199,13 @@ ast_node *new_name_node(char name[16]) {
     return this;
 }
 
-ast_node *new_attr_node(char name[16], val_type_t type){
+ast_node *new_attr_node(char * name, val_type_t type){
     ast_node * this = create_node();
     this->type = ATTR_DESC_N;
     this->v_type = ATTR_DESC;
     attr_desc_t * a = malloc(sizeof(attr_desc_t));
     a->type = type;
-    memcpy(a->name, name, 16);
+    memcpy(a->name, name, strlen(name));
     this->value = a;
     return this;
 }

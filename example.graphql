@@ -1,0 +1,89 @@
+test.db {
+    insert {
+        index(index_name: some_name, names[int_attr:int, b_attr:bool])
+    }
+}
+
+
+test.db {
+    insert {
+        index(
+            node(index_name: some_name, names[d_attr:double, s_attr:string])
+        )
+    }
+}
+
+
+test.db {
+    insert {
+        index(
+            link(index_name: some_name2)
+        )
+    }
+}
+
+test.db {
+    select {
+        index
+    }
+}
+
+
+test.db {
+    insert {
+        index(index_name:some_name) {
+            node(values:[0.3,"asda"])
+        }
+    }
+}
+
+
+test.db {
+    insert {
+        index(index_name:some_name) {
+            node(values:[4.5,""])
+        }
+    }
+}
+
+test.db {
+    select {
+        index(index_name:some_name) {
+            filter: eq(int_attr, 100)
+        }
+    }
+}
+
+test.db {
+    select {
+        index(index_name:some_name)
+    }
+}
+
+test.db {
+    delete {
+        index(index_name:some_name) {
+            node(721)
+        }
+    }
+}
+
+
+test.db {
+    update {
+        index(index_name: some_name){
+            set(721, int_attr, 135)
+        }
+    }
+}
+
+
+test.db {
+    insert {
+        index(index_name:some_name2) {
+            link((140, 450), (140, 556))
+        }
+    }
+}
+
+

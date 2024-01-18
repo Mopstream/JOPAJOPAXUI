@@ -9,20 +9,15 @@ typedef enum {
     I_LINK
 } element_kind_t;
 
-typedef struct {
+typedef struct index {
     uint32_t size;
     char type_name[16];
     element_kind_t kind;
-    union {
-        node_type_t node;
-        link_type_t link;
-    } description;
-} element_type_t;
+    uint32_t type_id;
+    node_type_t description;
 
-typedef struct index {
-    element_type_t type;
     uint32_t count;
     uint32_t first_page_num;
 } index_t;
 
-#endif //LLP_LAB1_INDEX_H
+#endif

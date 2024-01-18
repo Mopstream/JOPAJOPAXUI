@@ -65,7 +65,7 @@ void parse_log(Ast *op, uint32_t *cnt, cond_t **conditionals) {
 
 query_t *construct(Ast *ast) {
     query_t *q = malloc(sizeof(query_t));
-    memcpy(q->filename, ast->val->name, strlen(ast->val->name));
+    memcpy(q->filename, ast->val->name, strlen(ast->val->name) + 1);
     Ast *query_ast = ast->left;
     Ast *index_ast = query_ast->left;
     if (!index_ast) {
@@ -77,17 +77,21 @@ query_t *construct(Ast *ast) {
     if (!query_ast->right && query_ast->type == AST_NODE_TYPE__INSERT_N) {
         char *index_name = index_ast->val->name;
         Ast *attrs_list = index_ast->left;
-        uint32_t cnt = attrs_list->val->cnt;
-        attr_type_t *attrs = malloc(cnt * sizeof(attr_type_t));
-        for (uint32_t i = 0; i < cnt; ++i) {
-            Ast *attr = attrs_list->left;
-            AttrType *curr_attr = attr->val->attr_type;
-            memcpy(attrs[i].type_name, curr_attr->name, strlen(curr_attr->name));
-            attrs[i].type = attr_types[curr_attr->val];
-            attrs_list = attrs_list->right;
-        }
+        if (attrs_list) {
+            uint32_t cnt = attrs_list->val->cnt;
+            attr_type_t *attrs = malloc(cnt * sizeof(attr_type_t));
+            for (uint32_t i = 0; i < cnt; ++i) {
+                Ast *attr = attrs_list->left;
+                AttrType *curr_attr = attr->val->attr_type;
+                memcpy(attrs[i].type_name, curr_attr->name, strlen(curr_attr->name) + 1);
+                attrs[i].type = attr_types[curr_attr->val];
+                attrs_list = attrs_list->right;
+            }
 
-        q->index = create_index(index_name, attrs, cnt);
+            q->index = create_index(index_name, attrs, cnt, I_NODE);
+        } else {
+            q->index = create_index(index_name, 0, 0, I_LINK);
+        }
         q->q_type = ADD;
         q->target = Q_INDEX;
         return q;
@@ -140,7 +144,7 @@ query_t *construct(Ast *ast) {
     }
     if (query_ast->type == AST_NODE_TYPE__INSERT_N) {
         q->q_type = ADD;
-        switch (body->val->target) {
+        switch (query_ast->val->target) {
             case INSERT_TARGET__I_NODE: {
                 q->target = Q_NODE;
                 node_t *node = malloc(sizeof(node_t));
@@ -178,13 +182,8 @@ query_t *construct(Ast *ast) {
             }
             case INSERT_TARGET__I_LINK: {
                 q->target = Q_LINK;
-                link_t *link = malloc(sizeof(link_t));
-                q->query_body.add.link = link;
                 Link *curr_link = body->val->link;
-                link->node_from_id = curr_link->node_from_id;
-                link->node_from_type_id = curr_link->node_from_type_id;
-                link->node_to_id = curr_link->node_to_id;
-                link->node_to_type_id = curr_link->node_to_type_id;
+                q->query_body.add.link = create_link(curr_link->node_from_id, curr_link->node_from_type_id, curr_link->node_to_id, curr_link->node_to_type_id);
                 break;
             }
             default: {
@@ -194,7 +193,12 @@ query_t *construct(Ast *ast) {
         }
         return q;
     }
+
     q->q_type = SELECT;
+    if (q->index->kind == I_LINK) {
+        q->target = Q_LINK;
+        return q;
+    }
     q->target = Q_NODE;
     Ast *operation = body;
     select_q *sel = malloc(sizeof(select_q));
