@@ -21,7 +21,7 @@ void send_message(Response *msg, int sockfd) {
 
 void server_jobs(int connfd, struct sockaddr_in cli) {
     for (;;) {
-        uint8_t buffer[1024];
+        uint8_t buffer[4096];
         uint64_t bytes_received = recv(connfd, &buffer, 4096, 0);
         Ast *msg = ast__unpack(NULL, bytes_received, buffer);
         query_t *q = construct(msg);

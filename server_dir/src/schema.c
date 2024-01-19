@@ -384,7 +384,11 @@ struct find_context node_enumerating_action(struct find_context context, void *e
 }
 
 struct find_context link_enumerating_action(struct find_context context, void *extra) {
-    Response **res = (Response **) extra;
+    struct {
+        schema_t * schema;
+        Response **res;
+    } *e = extra;
+    Response **res = e->res;
     link_t *link = decode_link(context.thing);
     Response *new_res = malloc(sizeof(Response));
     response__init(new_res);
@@ -393,7 +397,41 @@ struct find_context link_enumerating_action(struct find_context context, void *e
     new_res->response = *res;
     *res = new_res;
 
+    struct find_context ind_context = find_index_by_id(e->schema, link->node_from_type_id);
+    destroy_page(ind_context.page);
+    index_t *ind = ind_context.thing;
+
+    struct find_context node_context = find_node_by_id(e->schema, ind, link->node_from_id);
+    destroy_page(node_context.page);
+    node_t *node = node_context.thing;
+    Response *from = malloc(sizeof(Response));
+    response__init(from);
+    from->type = RESPONSE_TYPE__NODE_R;
+    from->index = construct_index(ind);
+    from->node = construct_node(node, ind);
+    free_node(ind, node);
+    free_index(ind);
+
+
+    ind_context = find_index_by_id(e->schema, link->node_to_type_id);
+    destroy_page(ind_context.page);
+    ind = ind_context.thing;
+    node_context = find_node_by_id(e->schema, ind, link->node_to_id);
+    destroy_page(node_context.page);
+    node = node_context.thing;
+
+    Response *to = malloc(sizeof(Response));
+    response__init(to);
+    to->type = RESPONSE_TYPE__NODE_R;
+    to->index = construct_index(ind);
+    to->node = construct_node(node, ind);
+    to->response = from;
+    new_res->inner = to;
+    free_node(ind, node);
+    free_index(ind);
+
     free_link(link);
+
     return (struct find_context) {0};
 }
 
@@ -408,12 +446,9 @@ struct find_context find_index_by_name_action(struct find_context context, void 
 }
 
 struct find_context find_index_by_type_id_action(struct find_context context, void *extra) {
-    struct {
-        uint32_t id;
-        bool is_node;
-    } *params = extra;
+    uint32_t *id = extra;
     index_t *index = decode_index(context.thing);
-    if (((index->kind == I_NODE) == (params->is_node)) && index->type_id == params->id) {
+    if (index->type_id == *id) {
         context.thing = index;
         return context;
     }
@@ -462,7 +497,17 @@ Response *node_enumerate(schema_t *schema, index_t *index, select_q *conditional
 
 Response *link_enumerate(schema_t *schema, index_t *index) {
     Response *res = 0;
-    find(schema, index->first_page_num, link_enumerating_action, &res);
+    struct {
+        schema_t * schema;
+        Response **res;
+    } *extra = malloc(sizeof(struct {
+        schema_t * schema;
+        Response **res;
+    }));
+
+    extra->res = &res;
+    extra->schema = schema;
+    find(schema, index->first_page_num, link_enumerating_action, extra);
     return res;
 }
 
@@ -557,33 +602,32 @@ Response *add_node(schema_t *schema, index_t *index, node_t *node) {
     return res;
 }
 
-void add_link_to_node(schema_t *schema, uint32_t node_type_id, uint32_t node_id, link_ref_t *link, bool is_from) {
+struct find_context find_index_by_id(schema_t *schema, uint32_t i_id) {
+    return find(schema, schema->first_index, find_index_by_type_id_action, &i_id);
+}
+
+struct find_context find_node_by_id(schema_t *schema, index_t *index, uint32_t id) {
     struct {
+        index_t *index;
         uint32_t id;
-        bool is_node;
     } *extra = malloc(sizeof(struct {
+        index_t *index;
         uint32_t id;
-        bool is_node;
     }));
-    extra->id = node_type_id;
-    extra->is_node = true;
-    struct find_context ind_context = find(schema, schema->first_index, find_index_by_type_id_action, extra);
+    extra->id = id;
+    extra->index = index;
+
+    struct find_context node_context = find(schema, index->first_page_num, find_node_by_id_action, extra);
     free(extra);
+    return node_context;
+}
+
+void add_link_to_node(schema_t *schema, uint32_t node_type_id, uint32_t node_id, link_ref_t *link, bool is_from) {
+    struct find_context ind_context = find_index_by_id(schema, node_type_id);
     destroy_page(ind_context.page);
+    index_t *ind = ind_context.thing;
 
-    struct {
-        index_t *index;
-        uint32_t id;
-    } *extra1 = malloc(sizeof(struct {
-        index_t *index;
-        uint32_t id;
-    }));
-    extra1->id = node_id;
-    extra1->index = ind_context.thing;
-
-    struct find_context node_context = find(schema, ((index_t *) ind_context.thing)->first_page_num,
-                                            find_node_by_id_action, extra1);
-    free(extra1);
+    struct find_context node_context = find_node_by_id(schema, ind, node_id);
 
     node_t *node = node_context.thing;
 
@@ -600,7 +644,7 @@ void add_link_to_node(schema_t *schema, uint32_t node_type_id, uint32_t node_id,
         node->links_in = new_links;
     }
 
-    chunk_t *encoded = encode_node(node, ind_context.thing);
+    chunk_t *encoded = encode_node(node, ind);
     if (node_context.page->header->free_space + node_context.page->chunks[node_context.i].size - encoded->size >=
         0) {
         node_context.page->header->free_space += node_context.page->chunks[node_context.i].size - encoded->size;
@@ -609,12 +653,12 @@ void add_link_to_node(schema_t *schema, uint32_t node_type_id, uint32_t node_id,
         write_page(schema->fd, node_context.page);
     } else {
         delete_chunk(schema, node_context.page, node_context.i);
-        add_node(schema, ind_context.thing, node);
+        add_node(schema, ind, node);
     }
 
     free(encoded);
-    free_node(ind_context.thing, node);
-    free_index(ind_context.thing);
+    free_node(ind, node);
+    free_index(ind);
 }
 
 Response *add_link(schema_t *schema, index_t *index, link_t *link) {
@@ -663,7 +707,8 @@ Response *add_link(schema_t *schema, index_t *index, link_t *link) {
     return res;
 }
 
-Response *set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr_name[16], value_t new_value) {
+Response *
+set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr_name[16], value_t new_value) {
     Response *res = malloc(sizeof(Response));
     response__init(res);
     struct {

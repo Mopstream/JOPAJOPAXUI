@@ -11,24 +11,12 @@
   <component name="ChangeListManager">
     <list default="true" id="6b453759-1451-4b43-b1e3-f2e118a2918b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/ast.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/ast.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/ast.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/client" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/client_dir/client.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/client.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/converter.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/converter.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/parser.y" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/parser.y" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client_dir/printer.c" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client_dir/printer.h" beforeDir="false" afterPath="$PROJECT_DIR$/client_dir/printer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/includes/index.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/index.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/includes/query.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/query.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example.graphql" beforeDir="false" afterPath="$PROJECT_DIR$/test.graphql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/includes/schema.h" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/includes/schema.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/main.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/query_constructor.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/query_constructor.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/server.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/server.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_dir/src/query.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/query.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_dir/src/schema.c" beforeDir="false" afterPath="$PROJECT_DIR$/server_dir/src/schema.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec.proto" beforeDir="false" afterPath="$PROJECT_DIR$/spec.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +118,7 @@
       <workItem from="1705599420908" duration="23000" />
       <workItem from="1705599454075" duration="7000" />
       <workItem from="1705599471779" duration="1572000" />
-      <workItem from="1705601342515" duration="5431000" />
+      <workItem from="1705601342515" duration="18875000" />
     </task>
     <servers />
   </component>

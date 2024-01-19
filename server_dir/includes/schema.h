@@ -61,6 +61,10 @@ Response *add_link(schema_t *schema, index_t *index, link_t *link);
 
 void free_index(index_t *index);
 
+struct find_context find_index_by_id(schema_t *schema, uint32_t i_id);
+
+struct find_context find_node_by_id(schema_t *schema, index_t *index, uint32_t id);
+
 Response *delete_link_by_id(schema_t *schema, index_t * index, uint32_t link_id);
 
 Response *delete_node_by_id(schema_t *schema, index_t *index, uint32_t node_id);

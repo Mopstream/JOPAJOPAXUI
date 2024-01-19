@@ -42,7 +42,7 @@ int main() {
 
 
     Ast *msg;
-    uint8_t buf[1024];
+    uint8_t buf[4096];
 
     do {
         printf("> ");
@@ -50,7 +50,7 @@ int main() {
         msg = convert(ast);
         send_message(msg, sockfd);
 
-        uint64_t recieved = recv(sockfd, &buf, 1024, 0);
+        uint64_t recieved = recv(sockfd, &buf, 4086, 0);
         Response *res = response__unpack(NULL, recieved, buf);
         print_response(res, 0);
         response__free_unpacked(res, NULL);

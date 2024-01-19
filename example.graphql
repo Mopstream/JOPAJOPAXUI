@@ -1,89 +1,123 @@
-test.db {
-    insert {
-        index(index_name: some_name, names[int_attr:int, b_attr:bool])
-    }
-}
-
-
-test.db {
+example.db {
     insert {
         index(
-            node(index_name: some_name, names[d_attr:double, s_attr:string])
+            node(index_name: people, names[name: string, surname: string, gender: bool])
         )
     }
 }
 
-
-test.db {
+example.db {
     insert {
         index(
-            link(index_name: some_name2)
+            node(index_name: dogs, names[name: string, age: int])
         )
     }
 }
 
-test.db {
+example.db {
+    insert {
+        index(
+            link(index_name: ownerships)
+        )
+    }
+}
+
+example.db {
     select {
         index
     }
 }
 
-
-test.db {
+example.db {
     insert {
-        index(index_name:some_name) {
-            node(values:[0.3,"asda"])
+        index(index_name:people) {
+            node(values:["asd", "asdasd", true])
         }
     }
 }
 
-
-test.db {
+example.db {
     insert {
-        index(index_name:some_name) {
-            node(values:[4.5,""])
+        index(index_name:people) {
+            node(values:["", "nezrancygmjyjekiny", true])
+        }
+    }
+}
+example.db {
+    insert {
+        index(index_name:people) {
+            node(values:["gncwnpmismuqok", "jwfypdbknamzh", false])
+        }
+    }
+}
+example.db {
+    insert {
+        index(index_name:people) {
+            node(values:["", "urlxqoadhdfdtkq", false])
         }
     }
 }
 
-test.db {
+example.db {
     select {
-        index(index_name:some_name) {
-            filter: eq(int_attr, 100)
-        }
+        index(index_name:dogs)
     }
 }
 
-test.db {
-    select {
-        index(index_name:some_name)
-    }
-}
-
-test.db {
-    delete {
-        index(index_name:some_name) {
-            node(721)
-        }
-    }
-}
-
-
-test.db {
-    update {
-        index(index_name: some_name){
-            set(721, int_attr, 135)
-        }
-    }
-}
-
-
-test.db {
+example.db {
     insert {
-        index(index_name:some_name2) {
-            link((140, 450), (140, 556))
+        index(index_name:dogs) {
+            node(values:["dog", 4])
         }
     }
 }
 
+example.db {
+    insert {
+        index(index_name:dogs) {
+            node(values:["another_dog", 2])
+        }
+    }
+}
 
+example.db {
+    insert {
+        index(index_name:ownerships) {
+            link((215, 1603), (671, 2945))
+        }
+    }
+}
+
+example.db {
+    insert {
+        index(index_name:ownerships) {
+            link((215, 1603), (671, 3331))
+        }
+    }
+}
+
+example.db {
+    insert {
+        index(index_name:ownerships) {
+            link((215, 1938), (215, 1938))
+        }
+    }
+}
+
+example.db {
+    insert {
+        index(index_name:ownerships) {
+            link((671, 2945), (671, 3331))
+        }
+    }
+}
+
+example.db {
+    select {
+        index(index_name:ownerships)
+    }
+}
+
+people 215 [1603, 1938, 2164]
+dogs 671 [2945, 3331]
+ownerships 1013
