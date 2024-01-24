@@ -1,0 +1,310 @@
+> ===== NODE =====
+type name: Person, type_id: 1697
+id: 99
+attributes:
+  born = 1930
+  name = "Clint Eastwood"
+links out:
+  1. link type id = 924, link id = 176772
+  2. link type id = 1127, link id = 177986
+links in:
+===========
+
+> ===== NODE =====
+type name: Person, type_id: 1697
+id: 99
+attributes:
+  born = 1930
+  name = "Clint Eastwood"
+links out:
+  1. link type id = 924, link id = 176772
+  2. link type id = 1127, link id = 177986
+links in:
+===========
+
+        ===== NODE =====
+        type name: Movie, type_id: 1924
+        id: 97
+        attributes:
+          tagline = "It's a hell of a thing, killing a man"
+          votes = 49
+          title = "Unforgiven"
+          released = 1992
+        links out:
+        links in:
+          1. link type id = 924, link id = 176171
+          2. link type id = 924, link id = 176772
+          3. link type id = 924, link id = 177396
+          4. link type id = 1127, link id = 177986
+          5. link type id = 734, link id = 249998
+        ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 98
+                attributes:
+                  born = 1930
+                  name = "Richard Harris"
+                links out:
+                  1. link type id = 924, link id = 176171
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 99
+                attributes:
+                  born = 1930
+                  name = "Clint Eastwood"
+                links out:
+                  1. link type id = 924, link id = 176772
+                  2. link type id = 1127, link id = 177986
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 89
+                attributes:
+                  born = 1930
+                  name = "Gene Hackman"
+                links out:
+                  1. link type id = 924, link id = 166603
+                  2. link type id = 924, link id = 174810
+                  3. link type id = 924, link id = 177396
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 99
+                attributes:
+                  born = 1930
+                  name = "Clint Eastwood"
+                links out:
+                  1. link type id = 924, link id = 176772
+                  2. link type id = 1127, link id = 177986
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 169
+                attributes:
+                  born = 2024
+                  name = "Jessica Thompson"
+                links out:
+                  1. link type id = 734, link id = 248405
+                  2. link type id = 734, link id = 248755
+                  3. link type id = 734, link id = 249998
+                  4. link type id = 734, link id = 250414
+                  5. link type id = 734, link id = 250839
+                  6. link type id = 734, link id = 251859
+                links in:
+                  1. link type id = 1335, link id = 246918
+                  2. link type id = 1335, link id = 247429
+                ===========
+
+        ===== NODE =====
+        type name: Movie, type_id: 1924
+        id: 97
+        attributes:
+          tagline = "It's a hell of a thing, killing a man"
+          votes = 49
+          title = "Unforgiven"
+          released = 1992
+        links out:
+        links in:
+          1. link type id = 924, link id = 176171
+          2. link type id = 924, link id = 176772
+          3. link type id = 924, link id = 177396
+          4. link type id = 1127, link id = 177986
+          5. link type id = 734, link id = 249998
+        ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 98
+                attributes:
+                  born = 1930
+                  name = "Richard Harris"
+                links out:
+                  1. link type id = 924, link id = 176171
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 99
+                attributes:
+                  born = 1930
+                  name = "Clint Eastwood"
+                links out:
+                  1. link type id = 924, link id = 176772
+                  2. link type id = 1127, link id = 177986
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 89
+                attributes:
+                  born = 1930
+                  name = "Gene Hackman"
+                links out:
+                  1. link type id = 924, link id = 166603
+                  2. link type id = 924, link id = 174810
+                  3. link type id = 924, link id = 177396
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 99
+                attributes:
+                  born = 1930
+                  name = "Clint Eastwood"
+                links out:
+                  1. link type id = 924, link id = 176772
+                  2. link type id = 1127, link id = 177986
+                links in:
+                ===========
+
+                ===== NODE =====
+                type name: Person, type_id: 1697
+                id: 169
+                attributes:
+                  born = 2024
+                  name = "Jessica Thompson"
+                links out:
+                  1. link type id = 734, link id = 248405
+                  2. link type id = 734, link id = 248755
+                  3. link type id = 734, link id = 249998
+                  4. link type id = 734, link id = 250414
+                  5. link type id = 734, link id = 250839
+                  6. link type id = 734, link id = 251859
+                links in:
+                  1. link type id = 1335, link id = 246918
+                  2. link type id = 1335, link id = 247429
+                ===========
+
+> ===== NODE =====
+type name: Movie, type_id: 1924
+id: 62
+attributes:
+  tagline = "First loves last. Forever."
+  votes = 51
+  title = "Snow Falling on Cedars"
+  released = 1999
+links out:
+links in:
+  1. link type id = 924, link id = 142163
+  2. link type id = 924, link id = 142795
+  3. link type id = 924, link id = 143449
+  4. link type id = 924, link id = 144039
+  5. link type id = 1127, link id = 144631
+===========
+
+        ===== NODE =====
+        type name: Person, type_id: 1697
+        id: 64
+        attributes:
+          born = 1971
+          name = "Rick Yune"
+        links out:
+          1. link type id = 924, link id = 142795
+          2. link type id = 924, link id = 202474
+        links in:
+        ===========
+
+                ===== NODE =====
+                type name: Movie, type_id: 1924
+                id: 62
+                attributes:
+                  tagline = "First loves last. Forever."
+                  votes = 51
+                  title = "Snow Falling on Cedars"
+                  released = 1999
+                links out:
+                links in:
+                  1. link type id = 924, link id = 142163
+                  2. link type id = 924, link id = 142795
+                  3. link type id = 924, link id = 143449
+                  4. link type id = 924, link id = 144039
+                  5. link type id = 1127, link id = 144631
+                ===========
+
+                        ===== NODE =====
+                        type name: Person, type_id: 1697
+                        id: 58
+                        attributes:
+                          born = 1929
+                          name = "Max von Sydow"
+                        links out:
+                          1. link type id = 924, link id = 140310
+                          2. link type id = 924, link id = 143449
+                        links in:
+                        ===========
+
+===== NODE =====
+type name: Movie, type_id: 1924
+id: 128
+attributes:
+  tagline = "Prepare to enter a secret world of assassins"
+  votes = 14
+  title = "Ninja Assassin"
+  released = 2009
+links out:
+links in:
+  1. link type id = 924, link id = 201122
+  2. link type id = 924, link id = 201760
+  3. link type id = 924, link id = 202474
+  4. link type id = 924, link id = 203070
+  5. link type id = 1127, link id = 203572
+  6. link type id = 174, link id = 204124
+  7. link type id = 174, link id = 204525
+  8. link type id = 174, link id = 205005
+===========
+
+        ===== NODE =====
+        type name: Person, type_id: 1697
+        id: 64
+        attributes:
+          born = 1971
+          name = "Rick Yune"
+        links out:
+          1. link type id = 924, link id = 142795
+          2. link type id = 924, link id = 202474
+        links in:
+        ===========
+
+                ===== NODE =====
+                type name: Movie, type_id: 1924
+                id: 62
+                attributes:
+                  tagline = "First loves last. Forever."
+                  votes = 51
+                  title = "Snow Falling on Cedars"
+                  released = 1999
+                links out:
+                links in:
+                  1. link type id = 924, link id = 142163
+                  2. link type id = 924, link id = 142795
+                  3. link type id = 924, link id = 143449
+                  4. link type id = 924, link id = 144039
+                  5. link type id = 1127, link id = 144631
+                ===========
+
+                        ===== NODE =====
+                        type name: Person, type_id: 1697
+                        id: 58
+                        attributes:
+                          born = 1929
+                          name = "Max von Sydow"
+                        links out:
+                          1. link type id = 924, link id = 140310
+                          2. link type id = 924, link id = 143449
+                        links in:
+                        ===========
+
+>

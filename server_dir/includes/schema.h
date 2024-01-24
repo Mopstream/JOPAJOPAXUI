@@ -88,15 +88,18 @@ typedef struct cond {
     value_t val;
 } cond_t;
 
-typedef struct{
+typedef struct select_q{
+    index_t * index;
     uint32_t cond_cnt;
     cond_t * conditionals;
+    struct select_q *inner;
 } select_q;
-Response * node_enumerate(schema_t *schema, index_t *index, select_q * select);
+
+Response * node_enumerate(schema_t *schema, select_q * select);
 Response *link_enumerate(schema_t *schema, index_t *index);
 index_t * get_first_index(schema_t *schema, char name[16]);
 index_t *create_index(char name[16], attr_type_t * attrs, uint32_t cnt, element_kind_t kind);
-node_t *create_node(value_t*values, uint32_t cnt);
+node_t *create_node(value_t*values, uint32_t cnt, uint32_t id, bool flag);
 link_t *create_link(uint32_t node_from_id, uint32_t node_from_type_id, uint32_t node_to_id, uint32_t node_to_type_id);
 Index *construct_index(index_t *index);
 NodeType *convert_node_description(node_type_t type);

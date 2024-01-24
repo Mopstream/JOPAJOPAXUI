@@ -1,123 +1,39 @@
-example.db {
-    insert {
-        index(
-            node(index_name: people, names[name: string, surname: string, gender: bool])
-        )
-    }
-}
-
-example.db {
-    insert {
-        index(
-            node(index_name: dogs, names[name: string, age: int])
-        )
-    }
-}
-
-example.db {
-    insert {
-        index(
-            link(index_name: ownerships)
-        )
-    }
-}
-
-example.db {
+movie.db {
     select {
         index
     }
 }
 
-example.db {
-    insert {
-        index(index_name:people) {
-            node(values:["asd", "asdasd", true])
-        }
-    }
-}
 
-example.db {
-    insert {
-        index(index_name:people) {
-            node(values:["", "nezrancygmjyjekiny", true])
-        }
-    }
-}
-example.db {
-    insert {
-        index(index_name:people) {
-            node(values:["gncwnpmismuqok", "jwfypdbknamzh", false])
-        }
-    }
-}
-example.db {
-    insert {
-        index(index_name:people) {
-            node(values:["", "urlxqoadhdfdtkq", false])
-        }
-    }
-}
-
-example.db {
+MATCH (n:Person)--(m:Movie)--(x:Person) WHERE n.name = "Clint Eastwood" RETURN n,m,x
+movie.db {
     select {
-        index(index_name:dogs)
-    }
-}
-
-example.db {
-    insert {
-        index(index_name:dogs) {
-            node(values:["dog", 4])
+        index(index_name:Person) {
+            filter: eq(name, "Clint Eastwood") {
+                index(index_name:Movie) {
+                    index(index_name: Person)
+                }
+            }
         }
     }
 }
 
-example.db {
-    insert {
-        index(index_name:dogs) {
-            node(values:["another_dog", 2])
-        }
-    }
-}
 
-example.db {
-    insert {
-        index(index_name:ownerships) {
-            link((215, 1603), (671, 2945))
-        }
-    }
-}
 
-example.db {
-    insert {
-        index(index_name:ownerships) {
-            link((215, 1603), (671, 3331))
-        }
-    }
-}
-
-example.db {
-    insert {
-        index(index_name:ownerships) {
-            link((215, 1938), (215, 1938))
-        }
-    }
-}
-
-example.db {
-    insert {
-        index(index_name:ownerships) {
-            link((671, 2945), (671, 3331))
-        }
-    }
-}
-
-example.db {
+MATCH (a1:Movie)--(a2:Person)--(a3:Movie)--(a4:Person) WHERE a2.born > 1970 AND a4.born < 1930 RETURN a1,a2,a3,a4
+movie.db {
     select {
-        index(index_name:ownerships)
+        index(index_name:Movie) {
+            index(index_name:Person) {
+                filter: gt(born, 1970) {
+                    index(index_name:Movie) {
+                        index(index_name:Person) {
+                            filter: lt(born, 1930)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-people 215 [1603, 1938, 2164]
-dogs 671 [2945, 3331]
-ownerships 1013

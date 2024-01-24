@@ -9,7 +9,7 @@ spec : spec.proto
 	protoc-c --c_out=. spec.proto
 
 run_client: client
-	./client
+	stdbuf -o 0 ./client 1>out
 
 run_server: server
 	./server

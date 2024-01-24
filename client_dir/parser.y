@@ -112,9 +112,12 @@ delete: DELETE_T L_BR delete_body R_BR { $$ = $3; }
 insert_body: index_from_name L_BR insert_obj R_BR { $$ = new_insert_node($1, $3); }
            | index_from_attrs { $$ = new_insert_node($1, (insert_body_t){.target = I_INDEX, .body = 0}); }
 
-select_body: index_from_name L_BR filter R_BR { $$ = new_select_node($1, $3); }
+select_body: index_from_name L_BR filter R_BR { $$ = new_select_node($1, new_filter_node($3, 0)); }
+           | index_from_name L_BR filter L_BR select_body R_BR R_BR { $$ = new_select_node($1, new_filter_node($3, $5)); }
            | index_from_name { $$ = new_select_node($1, 0); }
+           | index_from_name L_BR select_body R_BR { $$ = new_select_node($1, new_filter_node(0, $3)); }
            | INDEX_T { $$ = new_select_node(0, 0); }
+
 update_body: index_from_name L_BR set R_BR {$$ = new_update_node($1, $3); }
 
 delete_body: index_from_name L_BR NODE_T L_PR INT_T R_PR R_BR { $$ = new_delete_node($1, new_val_node(new_int_attr($5))); }
@@ -135,7 +138,8 @@ name_node : name { $$ = new_name_node($1); }
 
 name: NAME_T { if(strlen($1) > MAX_NAME_LENGTH) { yyerror("name is too long"); YYABORT; } $$ = $1; }
 
-insert_obj: NODE_T L_PR values R_PR {$$ = (insert_body_t){.target = I_NODE, .body = new_node_node($3)}; }
+insert_obj: NODE_T L_PR values R_PR {$$ = (insert_body_t){.target = I_NODE, .body = new_node_node($3, 0, false)}; }
+          | NODE_T L_PR ID COLON INT_T COMMA values R_PR {$$ = (insert_body_t){.target = I_NODE, .body = new_node_node($7, $5, true)};}
           | link {$$ = (insert_body_t){.target = I_LINK, .body = $1}; }
 
 values: VALUES COLON L_BRK element_list R_BRK { $$ = $4; }
@@ -162,8 +166,8 @@ operation: logical_op { $$ = $1; }
 
 compare_op: COMPARE_OP L_PR name_node COMMA element R_PR { $$ = new_conditional_node($3, $1, $5); }
 
-logical_op: LOGICAL_UOP L_PR operation R_PR { $$ = new_filter_node($3, 0, $1); }
-          | LOGICAL_BOP L_PR operation COMMA operation R_PR { $$ = new_filter_node($3, $5, $1); }
+logical_op: LOGICAL_UOP L_PR operation R_PR { $$ = new_logical_node($3, 0, $1); }
+          | LOGICAL_BOP L_PR operation COMMA operation R_PR { $$ = new_logical_node($3, $5, $1); }
 
 set: SET_T L_PR INT_T COMMA name COMMA value R_PR { $$ = new_set_expr($3, $5, $7); }
 

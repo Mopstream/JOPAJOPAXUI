@@ -251,7 +251,7 @@ void save_index(schema_t *schema, index_t *index) {
     chunk_t *serialized = encode_index(index);
     struct find_context context = find(schema, schema->first_index, save_index_action, index);
 
-    if (context.page->header->free_space + context.page->chunks[context.i].size - serialized->size >= 0) {
+    if (context.page->header->free_space + context.page->chunks[context.i].size >= serialized->size) {
         context.page->header->free_space += context.page->chunks[context.i].size - serialized->size;
         free(context.page->chunks[context.i].data);
         context.page->chunks[context.i] = *serialized;
@@ -278,22 +278,32 @@ struct find_context index_enumerating_action(struct find_context context, void *
     return (struct find_context) {0};
 }
 
-struct find_context node_enumerating_action(struct find_context context, void *extra) {
+struct find_context find_node_by_id_action(struct find_context context, void *extra) {
     struct {
         index_t *index;
-        select_q *conditionals;
-        Response **res;
-    } *cond = extra;
-    node_t *node = decode_node(context.thing, cond->index);
+        uint32_t id;
+    } *params = extra;
+
+    node_t *node = decode_node(context.thing, params->index);
+    if (node->id == params->id) {
+        context.thing = node;
+        return context;
+    }
+    free_node(params->index, node);
+    return (struct find_context) {0};
+}
+
+bool check_node(select_q *sel, node_t *node) {
     bool flag = true;
-    for (uint32_t i = 0; i < cond->conditionals->cond_cnt; ++i) {
-        cond_t cur_cond = cond->conditionals->conditionals[i];
-        for (uint32_t j = 0; j < cond->index->description.attr_count; ++j) {
-            attr_type_t curr_attr_type = cond->index->description.attr_types[j];
+    index_t *index = sel->index;
+    for (uint32_t i = 0; i < sel->cond_cnt; ++i) {
+        cond_t cur_cond = sel->conditionals[i];
+        for (uint32_t j = 0; j < index->description.attr_count; ++j) {
+            attr_type_t curr_attr_type = index->description.attr_types[j];
             value_t curr_val = node->attrs[j];
             if (strcmp(cur_cond.attr_name, curr_attr_type.type_name) == 0) {
                 if (curr_attr_type.type == STRING) {
-                    if (cur_cond.cmp == EQUAL && strcmp(curr_val.str.str, cur_cond.val.str.str) != 0)
+                    if (cur_cond.cmp == EQUAL && strncmp(curr_val.str.str, cur_cond.val.str.str, cur_cond.val.str.size) != 0)
                         flag = false;
                 }
                 if (curr_attr_type.type == INT) {
@@ -369,23 +379,124 @@ struct find_context node_enumerating_action(struct find_context context, void *e
         }
         if (!flag) break;
     }
-    if (flag) {
-        Response *new_res = malloc(sizeof(Response));
-        response__init(new_res);
-        new_res->type = RESPONSE_TYPE__NODE_R;
-        new_res->index = construct_index(cond->index);
-        new_res->node = construct_node(node, cond->index);
-        new_res->response = *(cond->res);
-        *(cond->res) = new_res;
+    return flag;
+}
+
+struct find_context find_index_by_type_id_action(struct find_context context, void *extra) {
+    uint32_t *id = extra;
+    index_t *index = decode_index(context.thing);
+    if (index->type_id == *id) {
+        context.thing = index;
+        return context;
+    }
+    free_index(index);
+    return (struct find_context) {0};
+}
+
+struct find_context find_link_by_id_action(struct find_context context, void *extra) {
+    uint32_t *id = extra;
+    link_t *link = decode_link(context.thing);
+    if (link->link_id == *id) {
+        context.thing = link;
+        return context;
+    }
+    free_link(link);
+    return (struct find_context) {0};
+}
+
+Response *check_pattern(schema_t *schema, select_q *sel, node_t *node) {
+    if (!check_node(sel, node)) return 0;
+
+    Response *this = malloc(sizeof(Response));
+    response__init(this);
+    this->type = RESPONSE_TYPE__NODE_R;
+    select_q *inner = sel->inner;
+    if (inner) {
+        for (uint32_t i = 0; i < node->out_cnt; ++i) {
+            link_ref_t l = node->links_out[i];
+            struct find_context link_type_context = find(schema, schema->first_index, find_index_by_type_id_action,
+                                                         &l.link_type_id);
+            destroy_page(link_type_context.page);
+            index_t *link_index = link_type_context.thing;
+
+            struct find_context link_context = find(schema, link_index->first_page_num, find_link_by_id_action,
+                                                    &l.link_id);
+            free_index(link_index);
+            destroy_page(link_context.page);
+            link_t *link = link_context.thing;
+
+            if (link->node_to_type_id == inner->index->type_id) {
+                struct find_context curr_node_context = find_node_by_id(schema, inner->index, link->node_to_id);;
+                destroy_page(curr_node_context.page);
+                node_t *curr_node = curr_node_context.thing;
+
+                Response *curr = check_pattern(schema, inner, curr_node);
+                free_node(inner->index, curr_node);
+                if (curr) {
+                    curr->response = this->inner;
+                    this->inner = curr;
+                }
+            }
+            free_link(link);
+        }
+        for (uint32_t i = 0; i < node->in_cnt; ++i) {
+            link_ref_t l = node->links_in[i];
+            struct find_context link_type_context = find(schema, schema->first_index, find_index_by_type_id_action,
+                                                         &l.link_type_id);
+            destroy_page(link_type_context.page);
+            index_t *link_index = link_type_context.thing;
+
+            struct find_context link_context = find(schema, link_index->first_page_num, find_link_by_id_action,
+                                                    &l.link_id);
+            free_index(link_index);
+            destroy_page(link_context.page);
+            link_t *link = link_context.thing;
+
+            if (link->node_from_type_id == inner->index->type_id) {
+                struct find_context curr_node_context = find_node_by_id(schema, inner->index, link->node_from_id);
+                destroy_page(curr_node_context.page);
+                node_t *curr_node = curr_node_context.thing;
+
+                Response *curr = check_pattern(schema, inner, curr_node);
+                free_node(inner->index, curr_node);
+                if (curr) {
+                    curr->response = this->inner;
+                    this->inner = curr;
+                }
+            }
+            free_link(link);
+        }
+        if (!this->inner) {
+            free(this);
+            return 0;
+        }
+    }
+    this->node = construct_node(node, sel->index);
+    this->index = construct_index(sel->index);
+    return this;
+}
+
+struct find_context node_enumerating_action(struct find_context context, void *extra) {
+    struct {
+        schema_t *schema;
+        select_q *sel;
+        Response **res;
+    } *cond = extra;
+    node_t *node = decode_node(context.thing, cond->sel->index);
+
+    Response *res = check_pattern(cond->schema, cond->sel, node);
+    if (res) {
+        res->response = *(cond->res);
+        *(cond->res) = res;
     }
 
-    free_node(cond->index, node);
+    free_node(cond->sel->index, node);
     return (struct find_context) {0};
 }
 
 struct find_context link_enumerating_action(struct find_context context, void *extra) {
     struct {
-        schema_t * schema;
+        schema_t *schema;
         Response **res;
     } *e = extra;
     Response **res = e->res;
@@ -445,69 +556,61 @@ struct find_context find_index_by_name_action(struct find_context context, void 
     return (struct find_context) {0};
 }
 
-struct find_context find_index_by_type_id_action(struct find_context context, void *extra) {
-    uint32_t *id = extra;
-    index_t *index = decode_index(context.thing);
-    if (index->type_id == *id) {
-        context.thing = index;
-        return context;
-    }
-    free_index(index);
-    return (struct find_context) {0};
-}
-
-struct find_context find_node_by_id_action(struct find_context context, void *extra) {
-    struct {
-        index_t *index;
-        uint32_t id;
-    } *params = extra;
-
-    node_t *node = decode_node(context.thing, params->index);
-    if (node->id == params->id) {
-        context.thing = node;
-        return context;
-    }
-    free_node(params->index, node);
-    return (struct find_context) {0};
-}
-
 Response *index_enumerate(schema_t *schema) {
     Response *res = 0;
     find(schema, schema->first_index, index_enumerating_action, &res);
+    if (!res) {
+        res = malloc(sizeof(Response));
+        response__init(res);
+        res->type = RESPONSE_TYPE__STATUS_R;
+        res->status = "There are not such indexes here\n";
+    }
     return res;
 }
 
-Response *node_enumerate(schema_t *schema, index_t *index, select_q *conditionals) {
+Response *node_enumerate(schema_t *schema, select_q *sel) {
     Response *res = 0;
     struct {
-        index_t *index;
-        select_q *conditionals;
+        schema_t *schema;
+        select_q *sel;
         Response **res;
     } *extra = malloc(sizeof(struct {
-        index_t *index;
-        select_q *conditionals;
+        schema_t *schema;
+        select_q *sel;
         Response **res;
     }));
-    extra->index = index;
-    extra->conditionals = conditionals;
+    extra->schema = schema;
+    extra->sel = sel;
     extra->res = &res;
-    find(schema, index->first_page_num, node_enumerating_action, extra);
+    find(schema, sel->index->first_page_num, node_enumerating_action, extra);
+    if (!res) {
+        res = malloc(sizeof(Response));
+        response__init(res);
+        res->type = RESPONSE_TYPE__STATUS_R;
+        res->status = "There are not such nodes here\n";
+    }
     return res;
 }
 
 Response *link_enumerate(schema_t *schema, index_t *index) {
     Response *res = 0;
     struct {
-        schema_t * schema;
+        schema_t *schema;
         Response **res;
     } *extra = malloc(sizeof(struct {
-        schema_t * schema;
+        schema_t *schema;
         Response **res;
     }));
 
     extra->res = &res;
     extra->schema = schema;
     find(schema, index->first_page_num, link_enumerating_action, extra);
+    if (!res) {
+        res = malloc(sizeof(Response));
+        response__init(res);
+        res->type = RESPONSE_TYPE__STATUS_R;
+        res->status = "There are not such links here\n";
+    }
     return res;
 }
 
@@ -645,8 +748,7 @@ void add_link_to_node(schema_t *schema, uint32_t node_type_id, uint32_t node_id,
     }
 
     chunk_t *encoded = encode_node(node, ind);
-    if (node_context.page->header->free_space + node_context.page->chunks[node_context.i].size - encoded->size >=
-        0) {
+    if (node_context.page->header->free_space + node_context.page->chunks[node_context.i].size >= encoded->size) {
         node_context.page->header->free_space += node_context.page->chunks[node_context.i].size - encoded->size;
         free(node_context.page->chunks[node_context.i].data);
         node_context.page->chunks[node_context.i] = *encoded;
@@ -733,7 +835,7 @@ set_node_attribute(schema_t *schema, index_t *index, uint32_t node_id, char attr
 
     chunk_t *chunk = encode_node(context.thing, index);
 
-    if (context.page->header->free_space + context.page->chunks[context.i].size - chunk->size >= 0) {
+    if (context.page->header->free_space + context.page->chunks[context.i].size >= chunk->size) {
         context.page->header->free_space += context.page->chunks[context.i].size - chunk->size;
         free(context.page->chunks[context.i].data);
         context.page->chunks[context.i] = *chunk;
@@ -823,9 +925,10 @@ index_t *create_index(char name[16], attr_type_t *attrs, uint32_t cnt, element_k
     return index;
 }
 
-node_t *create_node(value_t *values, uint32_t cnt) {
+node_t *create_node(value_t *values, uint32_t cnt, uint32_t id, bool flag) {
     node_t *node = malloc(sizeof(node_t));
-    node->id = clock();
+    if (flag) node->id = id;
+    else node->id = clock();
     node->attrs = values;
     node->in_cnt = 0;
     node->out_cnt = 0;
@@ -912,7 +1015,8 @@ Node *construct_node(node_t *node, index_t *index) {
                 a->str = malloc(sizeof(String));
                 string__init(a->str);
                 a->str->size = node->attrs[i].str.size;
-                a->str->str = malloc(a->str->size);
+                a->str->str = malloc(a->str->size + 1);
+                memset(a->str->str, 0, a->str->size + 1);
                 memcpy(a->str->str, node->attrs[i].str.str, a->str->size);
                 break;
             }

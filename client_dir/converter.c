@@ -18,6 +18,7 @@ enum _AstNodeType node_types[] = {
         [VAL_N] = AST_NODE_TYPE__VAL_N,
         [NAME_N] = AST_NODE_TYPE__NAME_N,
         [LIST_N] = AST_NODE_TYPE__LIST_N,
+        [LOGICAL_N] = AST_NODE_TYPE__LOGICAL_N
 };
 
 enum _InsertTarget insert_targets[] = {

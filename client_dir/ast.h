@@ -19,6 +19,7 @@ typedef enum ast_node_type {
     NAME_N = 12,
     LIST_N = 13,
     ATTR_DESC_N = 14,
+    LOGICAL_N = 15,
 } ast_node_type;
 
 typedef enum {
@@ -95,11 +96,13 @@ ast_node *add_to_list(ast_node *list, ast_node *val);
 
 set_t *new_set_expr(uint32_t node_id, char name[16], attr_t *new_val);
 
-ast_node *new_filter_node(ast_node *l, ast_node *r, logical_op op);
+ast_node *new_filter_node(ast_node *logic, ast_node *inner);
+
+ast_node *new_logical_node(ast_node *l, ast_node *r, logical_op op);
 
 ast_node *new_conditional_node(ast_node *name, cmp_t cmp, ast_node *val);
 
-ast_node *new_node_node(ast_node *val_list);
+ast_node *new_node_node(ast_node *val_list, int id, bool flag);
 
 ast_node *new_link_node(link_t link);
 

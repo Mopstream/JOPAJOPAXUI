@@ -31,7 +31,7 @@ Response *exec(query_t *q) {
                     break;
                 }
                 case Q_NODE: {
-                    res = node_enumerate(schema, q->index, q->query_body.sel);
+                    res = node_enumerate(schema, q->query_body.sel);
                     break;
                 }
                 case Q_LINK: {

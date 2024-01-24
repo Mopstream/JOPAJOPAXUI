@@ -112,9 +112,17 @@ set_t *new_set_expr(uint32_t node_id, char name[16], attr_t *new_val) {
     return this;
 }
 
-ast_node *new_filter_node(ast_node *l, ast_node *r, logical_op op) {
+ast_node *new_filter_node(ast_node *logic, ast_node *inner) {
     ast_node *this = create_node();
     this->type = FILTER_N;
+    this->left = logic;
+    this->right = inner;
+    return this;
+}
+
+ast_node *new_logical_node(ast_node *l, ast_node *r, logical_op op) {
+    ast_node *this = create_node();
+    this->type = LOGICAL_N;
     this->left = l;
     this->right = r;
     logical_op *l_op = malloc(sizeof(logical_op));
@@ -136,10 +144,16 @@ ast_node *new_conditional_node(ast_node *name, cmp_t cmp, ast_node *val) {
     return this;
 }
 
-ast_node *new_node_node(ast_node *val_list) {
+ast_node *new_node_node(ast_node *val_list, int id, bool flag) {
     ast_node *this = create_node();
     this->type = NODE_N;
     this->left = val_list;
+    if (flag) {
+        this->v_type = CNT;
+        uint32_t *i = malloc(sizeof(uint32_t));
+        *i = id;
+        this->value = i;
+    }
     return this;
 }
 

@@ -4,6 +4,6 @@
 #include "includes/query.h"
 #include "../spec.pb-c.h"
 
-query_t * construct(Ast * ast);
+query_t *norm_construct(Ast *ast);
 
 #endif

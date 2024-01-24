@@ -24,7 +24,7 @@ void server_jobs(int connfd, struct sockaddr_in cli) {
         uint8_t buffer[4096];
         uint64_t bytes_received = recv(connfd, &buffer, 4096, 0);
         Ast *msg = ast__unpack(NULL, bytes_received, buffer);
-        query_t *q = construct(msg);
+        query_t *q = norm_construct(msg);
         Response *res = exec(q);
         send_message(res, connfd);
         ast__free_unpacked(msg, NULL);
@@ -41,7 +41,7 @@ int main() {
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
-        printf("socket creation failed...\n");
+                printf("socket creation failed...\n");
         exit(0);
     }
     bzero(&servaddr, sizeof(servaddr));

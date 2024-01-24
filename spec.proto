@@ -16,6 +16,7 @@ enum AstNodeType {
     NAME_N = 12;
     LIST_N = 13;
     ATTR_DESC_N = 14;
+    LOGICAL_N = 15;
 }
 
 enum InsertTarget {
